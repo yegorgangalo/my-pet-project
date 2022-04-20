@@ -1,0 +1,11 @@
+{
+  "name": "my-pet-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd server && npm run dev && cd .."
+  },
+  "author": "yegorgangalo",
+  "license": "ISC"
+}
