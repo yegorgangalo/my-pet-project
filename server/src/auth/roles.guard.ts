@@ -7,14 +7,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { CreateTokenPayloadDto } from 'src/token/dto/create-token-payload.dto';
+import { TokenService } from 'src/token/token.service';
 import { ROLES_KEY } from './roles-auth.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private tokenService: TokenService,
+    private reflector: Reflector,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -29,17 +31,20 @@ export class RolesGuard implements CanActivate {
       }
       const req = context.switchToHttp().getRequest();
       const authHeader = req.headers.authorization;
-      const [bearer, token] = authHeader.split(' ');
-      if (bearer !== 'Bearer' || !token) {
+      const [bearer, accessToken] = authHeader.split(' ');
+      if (bearer !== 'Bearer' || !accessToken) {
         throw new UnauthorizedException({
           message: 'User is unauthorized',
         });
       }
 
-      const user: CreateTokenPayloadDto = this.jwtService.verify(token);
-
+      const user = this.tokenService.validateToken(accessToken);
       req.user = user;
-      return user.roles.some(role => requiredRoles.includes(role.value));
+
+      const hasUserPermission = user.roles.some(role =>
+        requiredRoles.includes(role.value),
+      );
+      return !!user && hasUserPermission;
     } catch (e) {
       throw new HttpException('No access', HttpStatus.FORBIDDEN);
     }
