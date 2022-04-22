@@ -5,23 +5,17 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from 'src/users/users.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { TokenService } from 'src/token/token.service';
-// import { User } from 'src/users/users.schema';
-// import { CreateTokenPayloadDto } from 'src/auth/dto/create-token-payload.dto';
-// import { Role } from 'src/roles/roles.schema';
-// import { TokenDto } from 'src/auth/dto/token.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
-    // private jwtService: JwtService,
     private mailService: MailService,
     private configService: ConfigService,
     private tokenService: TokenService,
@@ -29,7 +23,29 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
-    return this.tokenService.generateToken(user);
+    const tokens = this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user._id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async logout(refreshToken: string) {
+    const removedTokenId = await this.tokenService.removeToken(refreshToken);
+    return removedTokenId;
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException(this.unAuthExcMessage);
+    }
+    const userData = this.tokenService.validateToken(refreshToken);
+    const tokenFromDB = await this.tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDB) {
+      throw new UnauthorizedException(this.unAuthExcMessage);
+    }
+    const userDB = await this.userService.getUserByEmail(userData.email);
+    const tokens = this.tokenService.generateTokens(userDB);
+    await this.tokenService.saveToken(userDB._id, tokens.refreshToken);
+    return tokens;
   }
 
   async registration(userDto: CreateUserDto) {
@@ -52,34 +68,25 @@ export class AuthService {
       userDto.email,
       `${SERVER_URL}/users/activate/${activationLink}`,
     );
-    return this.tokenService.generateToken(user);
+    const tokens = this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user._id, tokens.refreshToken);
+    return tokens;
   }
-
-  // private generateToken(user: User): TokenDto {
-  //   const payload: CreateTokenPayloadDto = {
-  //     _id: user._id,
-  //     email: user.email,
-  //     roles: user.roles as Role[],
-  //   };
-
-  //   return {
-  //     token: this.jwtService.sign(payload),
-  //   };
-  // }
 
   private async validateUser(userDto: CreateUserDto) {
     const userDB = await this.userService.getUserByEmail(userDto.email);
-    const unAuthExcMessage = { message: 'Wrong email or password' };
     if (!userDB) {
-      throw new UnauthorizedException(unAuthExcMessage);
+      throw new UnauthorizedException(this.unAuthExcMessage);
     }
     const passwordEquals = await bcrypt.compare(
       userDto.password,
       userDB.password,
     );
     if (!passwordEquals) {
-      throw new UnauthorizedException(unAuthExcMessage);
+      throw new UnauthorizedException(this.unAuthExcMessage);
     }
     return userDB;
   }
+
+  private unAuthExcMessage = { message: 'Wrong email or password' };
 }

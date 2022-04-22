@@ -1,15 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { AppModule } from './app.module';
 
 const start = async () => {
   try {
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.SERVER_PORT || 5001;
     const app = await NestFactory.create(AppModule);
 
     addSwaggerApiDocumentation(app);
 
-    app.enableCors();
+    app.use(cookieParser());
+    app.enableCors({
+      credentials: true,
+      origin: process.env.CLIENT_URL,
+    });
+    app.useGlobalPipes(new ValidationPipe());
     await app.listen(PORT, () => console.log(`server started on PORT ${PORT}`));
   } catch (e) {
     console.log(e);

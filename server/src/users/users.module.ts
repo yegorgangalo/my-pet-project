@@ -7,6 +7,7 @@ import { Comment, CommentSchema } from '../comments/comments.schema';
 import { Role, RoleSchema } from '../roles/roles.schema';
 import { AuthModule } from 'src/auth/auth.module';
 import { RolesModule } from 'src/roles/roles.module';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RolesModule } from 'src/roles/roles.module';
     ]),
     forwardRef(() => AuthModule),
     RolesModule,
+    TokenModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
