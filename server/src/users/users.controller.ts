@@ -1,3 +1,4 @@
+import { ROLES, ENV } from '@mandruy/common/const/const';
 import {
   Body,
   Controller,
@@ -18,7 +19,6 @@ import { UsersService } from './users.service';
 import { User } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AddUserRoleDto } from './dto/add-user-role.dto';
-import { ROLES } from 'src/common/const';
 
 @ApiTags('Users')
 @Controller('users')
@@ -72,9 +72,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Activate user from email' })
   @Get('/activate/:link')
-  // @Redirect(this.configService.get<string>('MONGODB_URI'), 301)
   activate(@Param('link') link: string, @Res() res) {
     this.usersService.activate(link);
-    res.redirect(this.configService.get<string>('CLIENT_URL'));
+    res.redirect(this.configService.get<string>(ENV.CLIENT_URL));
   }
 }

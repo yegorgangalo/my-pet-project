@@ -1,3 +1,4 @@
+import { ENV } from '@mandruy/common/const/const';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -16,7 +17,7 @@ import { TokenModule } from './token/token.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+        uri: configService.get<string>(ENV.MONGODB_URI),
       }),
       inject: [ConfigService],
     }),

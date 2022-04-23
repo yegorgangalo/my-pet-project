@@ -1,3 +1,4 @@
+import { ENV } from '@mandruy/common/const/const';
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -9,12 +10,12 @@ import { MailService } from './mail.service';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: configService.get('EMAIL_HOST'),
-          port: configService.get('EMAIL_PORT'),
+          host: configService.get<string>(ENV.EMAIL_HOST),
+          port: configService.get<string>(ENV.EMAIL_PORT),
           secure: false,
           auth: {
-            user: configService.get('EMAIL_USER'),
-            pass: configService.get('EMAIL_PASSWORD'),
+            user: configService.get<string>(ENV.EMAIL_USER),
+            pass: configService.get<string>(ENV.EMAIL_PASSWORD),
           },
         },
         // defaults: {

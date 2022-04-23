@@ -1,3 +1,4 @@
+import { ENV } from '@mandruy/common/const/const';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
@@ -11,10 +12,7 @@ import { Token, TokenSchema } from './token.schema';
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         return {
-          secret: configService.get<string>('JWT_SECRET_KEY'),
-          // signOptions: {
-          //   expiresIn: configService.get<string | number>('JWT_EXPIRATION_TIME'),
-          // },
+          secret: configService.get<string>(ENV.JWT_SECRET_KEY),
         };
       },
       inject: [ConfigService],

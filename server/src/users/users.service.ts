@@ -1,3 +1,4 @@
+import { ROLES } from '@mandruy/common/const/const';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -26,7 +27,7 @@ export class UsersService {
   }
 
   async create(dto: CreateUserDto): Promise<User> {
-    const role = await this.roleService.getByValue('tourist');
+    const role = await this.roleService.getByValue(ROLES.TOURIST);
     const user = await this.userModel.create({
       ...dto,
       roles: [role._id],

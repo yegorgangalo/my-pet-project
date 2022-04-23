@@ -1,3 +1,4 @@
+import { ENV, COOKIE } from '@mandruy/common/const/const';
 import { Controller, Body, Post, Res, Req, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -23,7 +24,7 @@ export class AuthController {
   ) {
     const data = await this.authService.login(userDto);
     const opts = this.getRefreshTokenCookieOptions();
-    res.cookie('refreshToken', data.refreshToken, opts);
+    res.cookie(COOKIE.REFRESH_TOKEN, data.refreshToken, opts);
     res.send(data);
   }
 
@@ -36,7 +37,7 @@ export class AuthController {
   ) {
     const data = await this.authService.registration(userDto);
     const opts = this.getRefreshTokenCookieOptions();
-    res.cookie('refreshToken', data.refreshToken, opts);
+    res.cookie(COOKIE.REFRESH_TOKEN, data.refreshToken, opts);
     res.send(data);
   }
 
@@ -44,9 +45,9 @@ export class AuthController {
   @ApiResponse({ status: 200, type: String })
   @Get('/logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const { refreshToken } = req.cookies;
+    const refreshToken = req.cookies[COOKIE.REFRESH_TOKEN];
     const token = await this.authService.logout(refreshToken);
-    res.clearCookie('refreshToken');
+    res.clearCookie(COOKIE.REFRESH_TOKEN);
     res.send(token);
   }
 
@@ -57,16 +58,16 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { refreshToken } = req.cookies;
+    const refreshToken = req.cookies[COOKIE.REFRESH_TOKEN];
     const data = await this.authService.refresh(refreshToken);
     const opts = this.getRefreshTokenCookieOptions();
-    res.cookie('refreshToken', data.refreshToken, opts);
+    res.cookie(COOKIE.REFRESH_TOKEN, data.refreshToken, opts);
     res.send(data);
   }
 
   getRefreshTokenCookieOptions() {
     const refreshExpiresIn = this.configService.get(
-      'JWT_REFRESH_EXPIRATION_TIME',
+      ENV.JWT_REFRESH_EXPIRATION_TIME,
     );
     const maxAge = parseInt(refreshExpiresIn, 10) * 24 * 60 * 60 * 1000;
     return {

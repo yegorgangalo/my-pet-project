@@ -1,3 +1,4 @@
+import { ENV } from '@mandruy/common/const/const';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -25,10 +26,10 @@ export class TokenService {
     };
 
     const accessExpiresIn = this.configService.get(
-      'JWT_ACCESS_EXPIRATION_TIME',
+      ENV.JWT_ACCESS_EXPIRATION_TIME,
     );
     const refreshExpiresIn = this.configService.get(
-      'JWT_REFRESH_EXPIRATION_TIME',
+      ENV.JWT_REFRESH_EXPIRATION_TIME,
     );
 
     return {
