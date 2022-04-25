@@ -1,4 +1,4 @@
-import { ENV } from '@mandruy/common/const/const';
+import { ENV } from 'src/common/const';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';

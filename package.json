@@ -32,6 +32,7 @@
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "mobx": "^6.5.0",
+    "mobx-react-lite": "^3.3.0",
     "mongoose": "^6.2.9",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

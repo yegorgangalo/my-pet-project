@@ -1,4 +1,4 @@
-import { ROLES, ENV } from '@mandruy/common/const/const';
+import { ROLES, ENV } from 'src/common/const';
 import {
   Body,
   Controller,

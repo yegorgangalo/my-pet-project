@@ -27,3 +27,7 @@ export const ENV = {
 export const COOKIE = {
   REFRESH_TOKEN: "refreshToken",
 }
+
+export const LS = {
+  ACCESS_TOKEN: "ACCESS_TOKEN",
+}

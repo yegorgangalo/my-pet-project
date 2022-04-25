@@ -1,4 +1,4 @@
-import { ROLES } from '@mandruy/common/const/const';
+import { ROLES } from 'src/common/const';
 import { Controller, Body, Post, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles-auth.decorator';

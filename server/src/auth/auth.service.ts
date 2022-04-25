@@ -1,3 +1,4 @@
+import { ENV } from 'src/common/const';
 import {
   Injectable,
   HttpException,
@@ -11,6 +12,7 @@ import { UsersService } from 'src/users/users.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { TokenService } from 'src/token/token.service';
+import { UserDto } from 'src/users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,9 +25,10 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
-    const tokens = this.tokenService.generateTokens(user);
-    await this.tokenService.saveToken(user._id, tokens.refreshToken);
-    return tokens;
+    const { accessToken, refreshToken } =
+      this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user._id, refreshToken);
+    return { accessToken, refreshToken, user: new UserDto(user) };
   }
 
   async logout(refreshToken: string) {
@@ -33,19 +36,20 @@ export class AuthService {
     return removedTokenId;
   }
 
-  async refresh(refreshToken: string) {
-    if (!refreshToken) {
+  async refresh(prevRefreshToken: string) {
+    if (!prevRefreshToken) {
       throw new UnauthorizedException(this.unAuthExcMessage);
     }
-    const userData = this.tokenService.validateToken(refreshToken);
-    const tokenFromDB = await this.tokenService.findToken(refreshToken);
+    const userData = this.tokenService.validateToken(prevRefreshToken);
+    const tokenFromDB = await this.tokenService.findToken(prevRefreshToken);
     if (!userData || !tokenFromDB) {
       throw new UnauthorizedException(this.unAuthExcMessage);
     }
     const userDB = await this.userService.getUserByEmail(userData.email);
-    const tokens = this.tokenService.generateTokens(userDB);
-    await this.tokenService.saveToken(userDB._id, tokens.refreshToken);
-    return tokens;
+    const { accessToken, refreshToken } =
+      this.tokenService.generateTokens(userDB);
+    await this.tokenService.saveToken(userDB._id, refreshToken);
+    return { accessToken, refreshToken, user: new UserDto(userDB) };
   }
 
   async registration(userDto: CreateUserDto) {
@@ -63,14 +67,15 @@ export class AuthService {
       activationLink,
       password: hashPassword,
     });
-    const SERVER_URL = this.configService.get<string>('SERVER_URL');
+    const SERVER_URL = this.configService.get<string>(ENV.SERVER_URL);
     await this.mailService.sendActivationMail(
       userDto.email,
       `${SERVER_URL}/users/activate/${activationLink}`,
     );
-    const tokens = this.tokenService.generateTokens(user);
-    await this.tokenService.saveToken(user._id, tokens.refreshToken);
-    return tokens;
+    const { accessToken, refreshToken } =
+      this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user._id, refreshToken);
+    return { accessToken, refreshToken, user: new UserDto(user) };
   }
 
   private async validateUser(userDto: CreateUserDto) {

@@ -1,4 +1,4 @@
-import { ROLES } from '@mandruy/common/const/const';
+import { ROLES } from 'src/common/const';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -14,7 +14,7 @@ export class UsersService {
   ) {}
 
   async getAll(): Promise<User[]> {
-    const users = await this.userModel.find({});
+    const users = await this.userModel.find({}).populate('roles');
     return users;
   }
 
