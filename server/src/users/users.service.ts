@@ -42,7 +42,7 @@ export class UsersService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findOne({ email }).populate('roles');
     return user;
   }
 

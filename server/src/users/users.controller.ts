@@ -30,7 +30,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, type: [User] })
-  @UseGuards(JwtAuthGuard)
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Get()
   getAll() {
     return this.usersService.getAll();

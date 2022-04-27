@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios"
 import { LS, ENV } from "@mandruy/common/const"
 import { makeAutoObservable } from "mobx"
-import { IUser } from "../models/IUser"
+import { IUser } from "../interfaces/IUser"
 import AuthService from "../services/AuthService"
-import { AuthResponse } from "../models/response/AuthResponse"
+import { IAuthResponse } from "../interfaces/IAuthResponse"
 
 export default class Store {
   user = {} as IUser
@@ -32,7 +32,6 @@ export default class Store {
       localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
       this.setAuth(true)
       this.setUser(data.user)
-      console.log(data)
     } catch (err) {
       console.log((err as AxiosError)?.response?.data?.message)
     }
@@ -44,7 +43,6 @@ export default class Store {
       localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
       this.setAuth(true)
       this.setUser(data.user)
-      console.log(data)
     } catch (err) {
       console.log((err as AxiosError)?.response?.data?.message)
     }
@@ -75,7 +73,7 @@ export default class Store {
   }
 
   async refreshToken() {
-    const { data } = await axios.get<AuthResponse>(
+    const { data } = await axios.get<IAuthResponse>(
       `${process.env[`REACT_APP_${ENV.SERVER_URL}`]}/auth/refresh`,
       { withCredentials: true }
     )
