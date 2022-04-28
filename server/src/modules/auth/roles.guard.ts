@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { TokenService } from 'src/token/token.service';
+import { TokenService } from 'src/modules/token/token.service';
 import { ROLES_KEY } from './roles-auth.decorator';
 
 @Injectable()

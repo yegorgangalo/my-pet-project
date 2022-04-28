@@ -8,11 +8,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { UsersService } from 'src/users/users.service';
-import { MailService } from 'src/mail/mail.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { TokenService } from 'src/token/token.service';
-import { UserDto } from 'src/users/dto/user.dto';
+import { UsersService } from 'src/modules/users/users.service';
+import { MailService } from 'src/modules/mail/mail.service';
+import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
+import { TokenService } from 'src/modules/token/token.service';
+import { UserDto } from 'src/modules/users/dto/user.dto';
 
 @Injectable()
 export class AuthService {

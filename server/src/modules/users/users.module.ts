@@ -5,9 +5,10 @@ import { UsersService } from './users.service';
 import { User, UserSchema } from './users.schema';
 import { Comment, CommentSchema } from '../comments/comments.schema';
 import { Role, RoleSchema } from '../roles/roles.schema';
-import { AuthModule } from 'src/auth/auth.module';
-import { RolesModule } from 'src/roles/roles.module';
-import { TokenModule } from 'src/token/token.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { RolesModule } from 'src/modules/roles/roles.module';
+import { TokenModule } from 'src/modules/token/token.module';
+import { HttpCacheModule } from 'src/modules/http-cache/http-cache.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TokenModule } from 'src/token/token.module';
     forwardRef(() => AuthModule),
     RolesModule,
     TokenModule,
+    HttpCacheModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

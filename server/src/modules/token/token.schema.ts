@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/users/users.schema';
+import { User } from 'src/modules/users/users.schema';
 
 export type TokenDocument = Token & mongoose.Document;
 

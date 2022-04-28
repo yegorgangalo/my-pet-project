@@ -4,10 +4,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/users/users.schema';
-import { CreateTokenPayloadDto } from 'src/token/dto/create-token-payload.dto';
-import { Role } from 'src/roles/roles.schema';
-import { TokenDto } from 'src/token/dto/token.dto';
+import { User } from 'src/modules/users/users.schema';
+import { CreateTokenPayloadDto } from 'src/modules/token/dto/create-token-payload.dto';
+import { Role } from 'src/modules/roles/roles.schema';
+import { TokenDto } from 'src/modules/token/dto/token.dto';
 import { Token, TokenDocument } from './token.schema';
 
 @Injectable()

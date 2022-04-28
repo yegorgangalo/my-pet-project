@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RolesModule } from './roles/roles.module';
 import { MailModule } from './mail/mail.module';
 import { TokenModule } from './token/token.module';
+import { HttpCacheModule } from './http-cache/http-cache.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TokenModule } from './token/token.module';
     RolesModule,
     MailModule,
     TokenModule,
+    HttpCacheModule,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Role } from 'src/roles/roles.schema';
+import { Role } from 'src/modules/roles/roles.schema';
 
 export class CreateTokenPayloadDto {
   readonly _id: mongoose.Schema.Types.ObjectId;

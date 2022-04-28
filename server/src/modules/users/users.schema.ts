@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from 'src/roles/roles.schema';
-import { Comment } from 'src/comments/comments.schema';
+import { Role } from 'src/modules/roles/roles.schema';
+import { Comment } from 'src/modules/comments/comments.schema';
 
 export type UserDocument = User & mongoose.Document;
 

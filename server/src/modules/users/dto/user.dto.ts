@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { User } from 'src/users/users.schema';
-import { Role } from 'src/roles/roles.schema';
+import { User } from 'src/modules/users/users.schema';
+import { Role } from 'src/modules/roles/roles.schema';
 
 export class UserDto {
   readonly name: string;

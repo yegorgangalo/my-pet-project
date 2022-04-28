@@ -1,4 +1,4 @@
-import { ROLES, ENV } from 'src/common/const';
+import { ROLES, ENV, CACHE_KEY } from 'src/common/const';
 import {
   Body,
   Controller,
@@ -8,17 +8,21 @@ import {
   Post,
   UseGuards,
   Res,
+  UseInterceptors,
+  CacheKey,
+  CacheTTL,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { ObjectId } from 'mongoose';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Roles } from 'src/auth/roles-auth.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { Roles } from 'src/modules/auth/roles-auth.decorator';
+import { RolesGuard } from 'src/modules/auth/roles.guard';
 import { UsersService } from './users.service';
 import { User } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AddUserRoleDto } from './dto/add-user-role.dto';
+import { HttpCacheInterceptor } from '../http-cache/httpCache.interceptor';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,6 +36,9 @@ export class UsersController {
   @ApiResponse({ status: 200, type: [User] })
   @Roles(ROLES.ADMIN)
   @UseGuards(RolesGuard)
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(CACHE_KEY.GET_USERS)
+  @CacheTTL(1000)
   @Get()
   getAll() {
     return this.usersService.getAll();

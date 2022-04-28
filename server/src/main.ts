@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
-import { AppModule } from './app.module';
+import { AppModule } from './modules/app.module';
+import { runInCluster } from './utils/runInCluster';
+import { addSwaggerApiDocumentation } from './utils/addSwaggerApiDoc';
 
-const start = async () => {
+const bootstrap = async () => {
   try {
     const PORT = process.env.SERVER_PORT || 5001;
     const app = await NestFactory.create(AppModule);
@@ -23,16 +24,4 @@ const start = async () => {
   }
 };
 
-start();
-
-function addSwaggerApiDocumentation(app) {
-  const config = new DocumentBuilder()
-    .setTitle('Nest Test BE')
-    .setDescription('Rest API documentation')
-    .setVersion('1.0.0')
-    .addTag('Yegor Gangalo')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/api/docs', app, document);
-}
+runInCluster({ bootstrap, cores: 1 });

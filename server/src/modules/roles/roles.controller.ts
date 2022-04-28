@@ -1,8 +1,8 @@
 import { ROLES } from 'src/common/const';
 import { Controller, Body, Post, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/auth/roles-auth.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/modules/auth/roles-auth.decorator';
+import { RolesGuard } from 'src/modules/auth/roles.guard';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './create-role.dto';
 import { Role } from './roles.schema';

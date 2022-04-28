@@ -3,8 +3,8 @@ import { Controller, Body, Post, Res, Req, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response, Request } from 'express';
-import { TokenDto } from 'src/token/dto/token.dto';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { TokenDto } from 'src/modules/token/dto/token.dto';
+import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 
 @ApiTags('Auth')

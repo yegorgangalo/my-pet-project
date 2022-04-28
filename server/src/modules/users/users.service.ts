@@ -1,16 +1,18 @@
-import { ROLES } from 'src/common/const';
+import { ROLES, CACHE_KEY } from 'src/common/const';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { User, UserDocument } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { RolesService } from 'src/roles/roles.service';
+import { RolesService } from 'src/modules/roles/roles.service';
+import { HttpCacheService } from 'src/modules/http-cache/http-cache.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private roleService: RolesService,
+    private httpCacheService: HttpCacheService,
   ) {}
 
   async getAll(): Promise<User[]> {
@@ -32,12 +34,14 @@ export class UsersService {
       ...dto,
       roles: [role._id],
     });
+    this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
     const populatedUser = await user.populate('roles');
     return populatedUser;
   }
 
   async delete(id: ObjectId): Promise<ObjectId> {
     const user = await this.userModel.findByIdAndDelete(id);
+    this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
     return user._id;
   }
 
@@ -73,5 +77,6 @@ export class UsersService {
     }
     user.isActivated = true;
     await user.save();
+    this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
   }
 }

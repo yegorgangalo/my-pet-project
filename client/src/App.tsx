@@ -39,6 +39,7 @@ function App() {
   if (!store.user.isActivated) {
     return <div className="App">
       <h1>Activate your account from email: {store.user.email}</h1>
+      <button onClick={() => store.logout()}>logout</button>
     </div>
   }
 
