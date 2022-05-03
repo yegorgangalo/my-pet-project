@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  margin-right: 4px;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.name {
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.logOutBtn svg,
+.logOutBtn svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.logOutBtn svg:hover,
+.logOutBtn svg:focus {
+  fill: rgb(160, 36, 36);
+}

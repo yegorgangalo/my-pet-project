@@ -70,8 +70,8 @@ export class UsersService {
     return updatedUser;
   }
 
-  async activate(activationLink: string) {
-    const user = await this.userModel.findOne({ activationLink });
+  async activate(activateAccountKey: string) {
+    const user = await this.userModel.findOne({ activateAccountKey });
     if (!user) {
       throw Error('Activation link is not correct');
     }

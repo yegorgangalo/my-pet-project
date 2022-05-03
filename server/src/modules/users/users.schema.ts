@@ -38,7 +38,7 @@ export class User {
     description: 'activation link from email',
   })
   @Prop()
-  activationLink: string;
+  activateAccountKey: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

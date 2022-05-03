@@ -41,6 +41,7 @@ export class UsersController {
   @CacheTTL(1000)
   @Get()
   getAll() {
+    console.log('getAll users controller');
     return this.usersService.getAll();
   }
 

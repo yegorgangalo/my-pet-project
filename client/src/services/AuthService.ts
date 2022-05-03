@@ -25,4 +25,10 @@ export default class AuthService {
   static async logout(): Promise<void> {
     return API.get("/auth/logout")
   }
+
+  static async sendActivationMail(
+    userId: string
+  ): Promise<AxiosResponse<IAuthResponse>> {
+    return API.get(`/mail/${userId}`)
+  }
 }

@@ -16,5 +16,5 @@ export class CreateUserDto {
   @Length(4, 16, { message: 'Should be more than 4 and less than 16 signs' })
   readonly password: string;
 
-  readonly activationLink: string;
+  readonly activateAccountKey: string;
 }

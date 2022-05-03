@@ -1,6 +1,6 @@
 import { ENV, LS } from "@mandruy/common/const"
 import axios from "axios"
-import { store } from "../index"
+import { store } from "../store/store"
 
 const API = axios.create({
   withCredentials: true,

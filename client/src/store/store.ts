@@ -5,10 +5,11 @@ import { IUser } from "../interfaces/IUser"
 import AuthService from "../services/AuthService"
 import { IAuthResponse } from "../interfaces/IAuthResponse"
 
-export default class Store {
+export class Store {
   user = {} as IUser
   isAuth = false
   isLoading = false
+  isSending = false
 
   constructor() {
     makeAutoObservable(this)
@@ -20,6 +21,10 @@ export default class Store {
 
   setLoading(bool: boolean) {
     this.isLoading = bool
+  }
+
+  setSending(bool: boolean) {
+    this.isSending = bool
   }
 
   setUser(user: IUser) {
@@ -80,4 +85,18 @@ export default class Store {
     localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
     return data.user
   }
+
+  async sendActivationMail(userId: string) {
+    this.setSending(true)
+    try {
+      await AuthService.sendActivationMail(userId)
+    } catch (err) {
+      console.log("error", (err as Error).message)
+      console.log(err)
+    } finally {
+      this.setSending(false)
+    }
+  }
 }
+
+export const store = new Store()

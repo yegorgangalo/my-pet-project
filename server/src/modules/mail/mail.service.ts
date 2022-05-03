@@ -1,24 +1,59 @@
+import { ENV } from 'src/common/const';
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
 
-  async sendActivationMail(emailTo: string, activationLink: string) {
-    this.mailerService.sendMail({
-      to: emailTo,
-      subject: 'Greeting from NestJS NodeMailer',
-      //   template: '/email',
-      //   context: {
-      //     name: activationLink,
-      //   },
-      html: `
+  async sendActivationMail(emailTo: string, activateAccountKey: string) {
+    console.log('sendActivationMail');
+    try {
+      const SERVER_URL = this.configService.get<string>(ENV.SERVER_URL);
+      const fullActivationLink = `${SERVER_URL}/users/activate/${activateAccountKey}`;
+      const res = await this.mailerService.sendMail({
+        to: emailTo,
+        subject: 'Greeting from NestJS NodeMailer',
+        //   template: '/email',
+        //   context: {
+        //     name: activationLink,
+        //   },
+        html: `
         <div>
         <h1>Follow link to activate your account:</h1>
-        <a href="${activationLink}">${activationLink}</a>
+        <a href="${fullActivationLink}">${fullActivationLink}</a>
         </div>
         `,
-    });
+      });
+      return res;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+    // return this.mailerService
+    //   .sendMail({
+    //     to: emailTo,
+    //     subject: 'Greeting from NestJS NodeMailer',
+    //     //   template: '/email',
+    //     //   context: {
+    //     //     name: activationLink,
+    //     //   },
+    //     html: `
+    //     <div>
+    //     <h1>Follow link to activate your account:</h1>
+    //     <a href="${activationLink}">${activationLink}</a>
+    //     </div>
+    //     `,
+    //   })
+    //   .then(success => {
+    //     console.log('success=', success);
+    //   })
+    //   .catch(err => {
+    //     console.log('err=', err);
+    //   });
   }
 }

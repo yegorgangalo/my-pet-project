@@ -1,11 +1,9 @@
-import { ENV } from 'src/common/const';
 import {
   Injectable,
   HttpException,
   HttpStatus,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from 'src/modules/users/users.service';
@@ -19,7 +17,6 @@ export class AuthService {
   constructor(
     private userService: UsersService,
     private mailService: MailService,
-    private configService: ConfigService,
     private tokenService: TokenService,
   ) {}
 
@@ -61,17 +58,13 @@ export class AuthService {
       );
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const activationLink = uuidv4();
+    const activateAccountKey = uuidv4();
     const user = await this.userService.create({
       ...userDto,
-      activationLink,
+      activateAccountKey,
       password: hashPassword,
     });
-    const SERVER_URL = this.configService.get<string>(ENV.SERVER_URL);
-    await this.mailService.sendActivationMail(
-      userDto.email,
-      `${SERVER_URL}/users/activate/${activationLink}`,
-    );
+    this.mailService.sendActivationMail(userDto.email, activateAccountKey);
     const { accessToken, refreshToken } =
       this.tokenService.generateTokens(user);
     await this.tokenService.saveToken(user._id, refreshToken);

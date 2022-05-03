@@ -1,24 +1,19 @@
-import React, { createContext, StrictMode } from 'react';
+import { StrictMode } from 'react';
+import { BrowserRouter } from "react-router-dom";
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import { StoreProvider } from './store/Context'
 import App from './App';
-import Store from './store/store'
-
-interface IStore {
- store: Store,
-}
-
-export const store = new Store()
-
-export const Context = createContext<IStore>({ store })
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <StrictMode>
-    <Context.Provider value={{ store }}>
-      <App />
-    </Context.Provider>
+    <StoreProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </StoreProvider>
   </StrictMode>
 );

@@ -1,6 +1,6 @@
 import { FC, useState, ChangeEvent, useContext } from "react"
 import { observer } from "mobx-react-lite";
-import { Context } from "../index"
+import { Context } from "../store/Context"
 
 const LoginForm: FC = () => {
   const { store } = useContext(Context)
