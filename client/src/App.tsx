@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute'
 import Spinner from './components/Spinner'
 import { Context } from "./store/Context"
 import Navigation from './components/Navigation'
+const ProfilePage = lazy(() => import('./pages/ProfilePage' /* webpackChunkName: "profilepage" */));
 const MainPage = lazy(() => import('./pages/MainPage' /* webpackChunkName: "mainpage" */));
 const ActivatePage = lazy(() => import('./pages/ActivatePage' /* webpackChunkName: "activatepage" */));
 const UsersPage = lazy(() => import('./pages/UsersPage' /* webpackChunkName: "userspage" */));
@@ -37,6 +38,7 @@ function App() {
             <Route path="/register" element={<PublicRoute component={<RegisterPage/>} restricted redirectTo="/activate"/>} />
             <Route path="/activate" element={<PrivateRoute component={<ActivatePage/>} noActivation redirectTo={"/users"}/>} />
             <Route path="/users" element={<PrivateRoute component={<UsersPage/>}/>} />
+            <Route path="/profile" element={<PrivateRoute component={<ProfilePage/>}/>} />
             <Route path="/" element={<PublicRoute component={<MainPage/>} />} />
           </Routes>
         </Suspense>

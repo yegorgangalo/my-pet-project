@@ -11,7 +11,10 @@ import {
   UseInterceptors,
   CacheKey,
   CacheTTL,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { ObjectId } from 'mongoose';
@@ -84,5 +87,14 @@ export class UsersController {
   activate(@Param('link') link: string, @Res() res) {
     this.usersService.activate(link);
     res.redirect(this.configService.get<string>(ENV.CLIENT_URL));
+  }
+
+  @Post('avatar/:userId')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadAvatar(
+    @Param('userId') userId: ObjectId,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadAvatar(userId, file);
   }
 }

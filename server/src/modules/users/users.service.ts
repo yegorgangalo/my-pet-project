@@ -6,6 +6,7 @@ import { User, UserDocument } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/modules/roles/roles.service';
 import { HttpCacheService } from 'src/modules/http-cache/http-cache.service';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +14,7 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private roleService: RolesService,
     private httpCacheService: HttpCacheService,
+    private filesService: FilesService,
   ) {}
 
   async getAll(): Promise<User[]> {
@@ -78,5 +80,14 @@ export class UsersService {
     user.isActivated = true;
     await user.save();
     this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
+  }
+
+  async uploadAvatar(userId: ObjectId, file: Express.Multer.File) {
+    const user = await this.userModel.findById(userId);
+    const filePath = await this.filesService.createFile(file);
+    user.avatar = filePath;
+    await user.save();
+    this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
+    return filePath;
   }
 }

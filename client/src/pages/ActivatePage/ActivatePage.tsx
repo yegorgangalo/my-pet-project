@@ -2,10 +2,10 @@ import { useContext, FC } from "react"
 import { observer } from "mobx-react-lite";
 import { Typography, Button, Box } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import { Context } from '../../store/Context'
+import { Context } from 'store/Context'
 import Spinner from "components/Spinner";
 
-const MainPage: FC = () => {
+const ActivatePage: FC = () => {
   const { store } = useContext(Context)
   const { email, _id, isActivated } = store.user
   const sendActivationMail = () => store.sendActivationMail(_id)
@@ -28,4 +28,4 @@ const MainPage: FC = () => {
   )
 }
 
-export default observer(MainPage)
+export default observer(ActivatePage)

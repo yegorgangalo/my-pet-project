@@ -39,6 +39,9 @@ export class User {
   })
   @Prop()
   activateAccountKey: string;
+
+  @Prop({ default: null })
+  avatar: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

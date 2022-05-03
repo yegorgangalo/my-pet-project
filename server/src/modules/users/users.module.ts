@@ -9,6 +9,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { RolesModule } from 'src/modules/roles/roles.module';
 import { TokenModule } from 'src/modules/token/token.module';
 import { HttpCacheModule } from 'src/modules/http-cache/http-cache.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { HttpCacheModule } from 'src/modules/http-cache/http-cache.module';
     RolesModule,
     TokenModule,
     HttpCacheModule,
+    FilesModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
