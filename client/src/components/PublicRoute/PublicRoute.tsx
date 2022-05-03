@@ -13,7 +13,6 @@ const PublicRoute: FC<PublicRouteProps> = ({ component, restricted = false, redi
   const { store } = useContext(Context)
   const isLoggedIn = store.isAuth
   const shouldRedirect = isLoggedIn && restricted;
-  console.log('PublicRoute shouldRedirect=', shouldRedirect);
 
   return (<>
     {shouldRedirect ? <Navigate to={redirectTo} replace /> : component}
