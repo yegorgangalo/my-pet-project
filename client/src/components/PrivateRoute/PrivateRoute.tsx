@@ -11,6 +11,11 @@ interface PrivateRouteProps {
 
 const PublicRoute: FC<PrivateRouteProps> = ({ component, redirectTo = '/', noActivation = false }) => {
   const { store } = useContext(Context)
+
+  if (!store.isLoadedBE) {
+    return <></>
+  }
+
   const isLoggedIn = noActivation ? store.isAuth : (store.isAuth && store.user.isActivated)
 
   return (<>

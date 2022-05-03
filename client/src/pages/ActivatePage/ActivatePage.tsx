@@ -21,8 +21,8 @@ const MainPage: FC = () => {
       <Button
         onClick={sendActivationMail}
         variant="contained"
-        endIcon={store.isSending ? <Spinner/> : <SendIcon />}
-        disabled={store.isSending}
+        endIcon={store.isLoading ? <Spinner/> : <SendIcon />}
+        disabled={store.isLoading}
       >Resend activation link</Button>
     </Box>
   )

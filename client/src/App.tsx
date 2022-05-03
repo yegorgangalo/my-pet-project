@@ -26,7 +26,7 @@ function App() {
   const methods = useForm()
 
   return (<FormProvider {...methods}>
-    {store.isLoading
+    {!store.isLoadedBE
       ? <Spinner centerred/>
       : (
       <>

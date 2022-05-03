@@ -8,8 +8,8 @@ import { IAuthResponse } from "../interfaces/IAuthResponse"
 export class Store {
   user = {} as IUser
   isAuth = false
+  isLoadedBE = false
   isLoading = false
-  isSending = false
 
   constructor() {
     makeAutoObservable(this)
@@ -19,12 +19,12 @@ export class Store {
     this.isAuth = bool
   }
 
-  setLoading(bool: boolean) {
-    this.isLoading = bool
+  setIsLoadedBE() {
+    this.isLoadedBE = true
   }
 
-  setSending(bool: boolean) {
-    this.isSending = bool
+  setLoading(bool: boolean) {
+    this.isLoading = bool
   }
 
   setUser(user: IUser) {
@@ -65,7 +65,6 @@ export class Store {
   }
 
   async checkAuth() {
-    this.setLoading(true)
     try {
       const user = await this.refreshToken()
       this.setAuth(true)
@@ -73,7 +72,7 @@ export class Store {
     } catch (err) {
       console.log((err as AxiosError)?.response?.data?.message)
     } finally {
-      this.setLoading(false)
+      this.setIsLoadedBE()
     }
   }
 
@@ -87,14 +86,14 @@ export class Store {
   }
 
   async sendActivationMail(userId: string) {
-    this.setSending(true)
+    this.setLoading(true)
     try {
       await AuthService.sendActivationMail(userId)
     } catch (err) {
       console.log("error", (err as Error).message)
       console.log(err)
     } finally {
-      this.setSending(false)
+      this.setLoading(false)
     }
   }
 }
