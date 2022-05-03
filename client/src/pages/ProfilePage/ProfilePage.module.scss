@@ -1,0 +1,17 @@
+.dropZone {
+    height: 200px;
+    color: grey;
+    font-weight: 500;
+    border: 2px dashed black;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover,
+    &:focus {
+        border: 2px solid black;
+        border-radius: 4px;
+    }
+}

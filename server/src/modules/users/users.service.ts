@@ -1,7 +1,8 @@
-import { ROLES, CACHE_KEY } from 'src/common/const';
+import { ROLES, CACHE_KEY, ENV } from 'src/common/const';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/modules/roles/roles.service';
@@ -15,6 +16,7 @@ export class UsersService {
     private roleService: RolesService,
     private httpCacheService: HttpCacheService,
     private filesService: FilesService,
+    private configService: ConfigService,
   ) {}
 
   async getAll(): Promise<User[]> {
@@ -84,10 +86,11 @@ export class UsersService {
 
   async uploadAvatar(userId: ObjectId, file: Express.Multer.File) {
     const user = await this.userModel.findById(userId);
-    const filePath = await this.filesService.createFile(file);
-    user.avatar = filePath;
+    const fileName = await this.filesService.createFile(file);
+    user.avatar = fileName;
     await user.save();
     this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
-    return filePath;
+    const fileURL = this.configService.get(ENV.SERVER_URL) + '/' + fileName;
+    return fileURL;
   }
 }

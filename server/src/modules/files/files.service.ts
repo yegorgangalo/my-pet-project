@@ -11,15 +11,13 @@ export class FilesService {
       const splitted = fileName.split('.');
       const extension = splitted.pop();
       const fileNameWithoutExtension = splitted.join();
-      const uniqueName = `${fileNameWithoutExtension}-${uuidv4()}.${extension}`;
-
+      const uniqueFileName = `${fileNameWithoutExtension}-${uuidv4()}.${extension}`;
       const filePath = path.resolve(__dirname, '..', '..', '..', 'static');
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
       }
-      fs.writeFileSync(path.join(filePath, uniqueName), file.buffer);
-
-      return uniqueName;
+      fs.writeFileSync(path.join(filePath, uniqueFileName), file.buffer);
+      return uniqueFileName;
     } catch (err) {
       console.log(err);
       throw new HttpException(

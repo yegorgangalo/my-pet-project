@@ -1,9 +1,10 @@
 import axios, { AxiosError } from "axios"
 import { LS, ENV } from "@mandruy/common/const"
 import { makeAutoObservable } from "mobx"
-import { IUser } from "../interfaces/IUser"
-import AuthService from "../services/AuthService"
-import { IAuthResponse } from "../interfaces/IAuthResponse"
+import AuthService from "services/AuthService"
+import UserService from "services/UserService"
+import { IUser } from "interfaces/IUser"
+import { IAuthResponse } from "interfaces/IAuthResponse"
 
 export class Store {
   user = {} as IUser
@@ -92,6 +93,17 @@ export class Store {
     } catch (err) {
       console.log("error", (err as Error).message)
       console.log(err)
+    } finally {
+      this.setLoading(false)
+    }
+  }
+
+  async updateUserAvatar(userId: string, formData: FormData) {
+    this.setLoading(true)
+    try {
+      const { data } = await UserService.uploadAvatar(userId, formData)
+      store.user.avatar = data
+    } catch (err) {
     } finally {
       this.setLoading(false)
     }

@@ -1,7 +1,7 @@
 import { useState, useContext } from "react"
-import { IUser } from "../../interfaces/IUser";
-import UserService from "../../services/UserService";
-import { Context } from '../../store/Context'
+import { IUser } from "interfaces/IUser";
+import UserService from 'services/UserService';
+import { Context } from 'store/Context'
 
 export default function UsersPage() {
   const { store } = useContext(Context)

@@ -21,6 +21,8 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem(LS.ACCESS_TOKEN)) {
       store.checkAuth()
+    } else {
+      store.setIsLoadedBE()
     }
   }, [store])
 
