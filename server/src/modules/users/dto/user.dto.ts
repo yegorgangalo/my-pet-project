@@ -1,4 +1,4 @@
-import { ENV } from '@mandruy/common/const';
+import { AWS } from '@mandruy/common/const';
 import { ConfigService } from '@nestjs/config';
 import mongoose from 'mongoose';
 import { User } from 'src/modules/users/users.schema';
@@ -18,7 +18,8 @@ export class UserDto {
     this._id = user._id;
     this.name = user.name;
     this.email = user.email;
-    this.avatar = this.getEnvValue(ENV.SERVER_URL) + '/' + user.avatar;
+    // this.avatar = this.getEnvValue(ENV.SERVER_URL) + '/' + user.avatar;
+    this.avatar = this.getEnvValue(AWS.AWS_S3_BUCKET) + '/' + user.avatar;
     this.roles = user.roles;
     this.isActivated = user.isActivated;
   }

@@ -86,11 +86,16 @@ export class UsersService {
 
   async uploadAvatar(userId: ObjectId, file: Express.Multer.File) {
     const user = await this.userModel.findById(userId);
-    const fileName = await this.filesService.createFile(file);
-    user.avatar = fileName;
+    // const fileName = await this.filesService.createFile(file);
+    const uploadResult = await this.filesService.uploadFileToS3(
+      file,
+      user.avatar,
+    );
+    user.avatar = uploadResult.Key;
     await user.save();
     this.httpCacheService.clearCache(CACHE_KEY.GET_USERS);
-    const fileURL = this.configService.get(ENV.SERVER_URL) + '/' + fileName;
-    return fileURL;
+    // const fileURL = this.configService.get(ENV.SERVER_URL) + '/' + fileName;
+    // return fileURL;
+    return uploadResult.Location;
   }
 }
