@@ -31,3 +31,7 @@ export const COOKIE = {
 export const LS = {
   ACCESS_TOKEN: "ACCESS_TOKEN",
 }
+
+export const CACHE_KEY = {
+  GET_USERS: "GET_USERS",
+}

@@ -1,4 +1,4 @@
-import { ROLES, CACHE_KEY, ENV } from 'src/common/const';
+import { ROLES, CACHE_KEY, ENV } from '@mandruy/common/const';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';

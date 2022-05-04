@@ -1,4 +1,4 @@
-import { ENV } from 'src/common/const';
+import { ENV } from '@mandruy/common/const';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';

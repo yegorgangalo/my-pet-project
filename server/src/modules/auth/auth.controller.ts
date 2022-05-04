@@ -1,4 +1,4 @@
-import { ENV, COOKIE } from 'src/common/const';
+import { ENV, COOKIE } from '@mandruy/common/const';
 import { Controller, Body, Post, Res, Req, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

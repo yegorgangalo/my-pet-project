@@ -1,4 +1,4 @@
-import { ENV } from 'src/common/const';
+import { ENV } from '@mandruy/common/const';
 import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

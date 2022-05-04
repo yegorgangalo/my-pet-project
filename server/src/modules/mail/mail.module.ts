@@ -1,4 +1,4 @@
-import { ENV } from 'src/common/const';
+import { ENV } from '@mandruy/common/const';
 import { Module, forwardRef } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
