@@ -1,4 +1,4 @@
-import { LS } from "@mandruy/common/const"
+import { LS, ROLES } from "@mandruy/common/const"
 import { observer } from "mobx-react-lite";
 import { useEffect, useContext } from 'react'
 import { lazy, Suspense } from 'react';
@@ -39,7 +39,7 @@ function App() {
             <Route path="/login" element={<PublicRoute component={<LoginPage/>} restricted redirectTo={store.user.isActivated ? "/" : "/activate"}/>} />
             <Route path="/register" element={<PublicRoute component={<RegisterPage/>} restricted redirectTo="/activate"/>} />
             <Route path="/activate" element={<PrivateRoute component={<ActivatePage/>} noActivation redirectTo={"/users"}/>} />
-            <Route path="/users" element={<PrivateRoute component={<UsersPage/>}/>} />
+            <Route path="/users" element={<PrivateRoute component={<UsersPage/>} allowedRoles={[ROLES.TOURIST]} userRoles={store.user.roles} />} />
             <Route path="/profile" element={<PrivateRoute component={<ProfilePage/>}/>} />
             <Route path="/" element={<PublicRoute component={<MainPage/>} />} />
           </Routes>

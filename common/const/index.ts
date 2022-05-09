@@ -1,9 +1,9 @@
-export const ROLES = {
-  GUEST: "guest",
-  TOURIST: "tourist",
-  TRAVELLER: "traveller",
-  COMPANY: "company",
-  ADMIN: "admin",
+export enum ROLES {
+  GUEST = "GUEST",
+  TOURIST = "TOURIST",
+  TRAVELLER = "TRAVELLER",
+  COMPANY = "COMPANY",
+  ADMIN = "ADMIN",
 }
 
 export const ENV = {
