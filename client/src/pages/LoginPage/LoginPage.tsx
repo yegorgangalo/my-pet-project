@@ -1,7 +1,8 @@
 import { useContext, FC } from "react"
 import { Typography, Button, TextField, Box } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
-import PasswordTextField from '../../components/PasswordTextField'
+import PasswordTextField from 'components/PasswordTextField'
+import GoogleButton from "components/GoogleButton/GoogleButton";
 import { Context } from '../../store/Context'
 
 interface ILoginData {
@@ -48,6 +49,7 @@ const LoginPage: FC = () => {
           )}
         />
         <Button type="submit" variant="contained">Log In</Button>
+        <GoogleButton/>
       </Box>
     </Box>
   )

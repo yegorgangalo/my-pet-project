@@ -3,6 +3,7 @@ import { LS, ENV } from "@mandruy/common/const"
 import { makeAutoObservable } from "mobx"
 import AuthService from "services/AuthService"
 import UserService from "services/UserService"
+import GoogleService from "services/GoogleService"
 import { IUser } from "interfaces/IUser"
 import { IAuthResponse } from "interfaces/IAuthResponse"
 
@@ -30,6 +31,17 @@ export class Store {
 
   setUser(user: IUser) {
     this.user = user
+  }
+
+  async googleLogin(token: string) {
+    try {
+      const { data } = await GoogleService.login(token)
+      localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
+      this.setAuth(true)
+      this.setUser(data.user)
+    } catch (err) {
+      console.log((err as AxiosError)?.response?.data?.message)
+    }
   }
 
   async login(email: string, password: string) {

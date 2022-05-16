@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { TokenModule } from './token/token.module';
 import { HttpCacheModule } from './http-cache/http-cache.module';
 import { FilesModule } from './files/files.module';
+import { AuthGoogleModule } from './auth-google/auth-google.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FilesModule } from './files/files.module';
     TokenModule,
     HttpCacheModule,
     FilesModule,
+    AuthGoogleModule,
   ],
 })
 export class AppModule {}
