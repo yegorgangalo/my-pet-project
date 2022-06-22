@@ -1,39 +1,56 @@
+import { ENV } from '@mandruy/common/const';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { google, Auth } from 'googleapis';
-// import { UsersService } from '../users/users.service';
-// import { AuthenticationService } from '../authentication/authentication.service';
-// import User from '../users/user.entity';
+import { OAuth2Client } from 'google-auth-library';
+import { UsersService } from 'src/modules/users/users.service';
+import { TokenService } from 'src/modules/token/token.service';
+import { UserDto } from 'src/modules/users/dto/user.dto';
 
 @Injectable()
 export class AuthGoogleService {
-  oauthClient: Auth.OAuth2Client;
-  constructor(private readonly configService: ConfigService) {
-    const clientID = this.configService.get('GOOGLE_AUTH_CLIENT_ID');
-    const clientSecret = this.configService.get('GOOGLE_AUTH_CLIENT_SECRET');
-
-    this.oauthClient = new google.auth.OAuth2(clientID, clientSecret);
+  clientID: string;
+  oAuth2Client: OAuth2Client;
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userService: UsersService,
+    private tokenService: TokenService,
+  ) {
+    this.clientID = this.configService.get(ENV.GOOGLE_AUTH_CLIENT_ID);
+    this.oAuth2Client = new OAuth2Client(this.clientID);
   }
 
   async login(token: string) {
-    console.log('token=', token);
+    try {
+      const ticket = await this.oAuth2Client.verifyIdToken({
+        idToken: token,
+        audience: this.clientID, // Specify the CLIENT_ID of the app that accesses the backend
+        // for multiple clients: [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+      });
+
+      const payload = ticket.getPayload();
+      const { email, email_verified } = payload;
+      const user = await this.validateUser({ email, email_verified });
+      const { accessToken, refreshToken } =
+        this.tokenService.generateTokens(user);
+      await this.tokenService.saveToken(user._id, refreshToken);
+      return { accessToken, refreshToken, user: new UserDto(user) };
+    } catch (err) {
+      console.log('google auth error:', err);
+      return err;
+    }
   }
 
-  // async authenticate(token: string) {
-  //   const tokenInfo = await this.oauthClient.getTokenInfo(token);
+  private async validateUser({ email, email_verified }) {
+    if (!email_verified) {
+      throw new UnauthorizedException(this.unVerifiedExcMessage);
+    }
+    const userDB = await this.userService.getUserByEmail(email);
+    if (!userDB) {
+      throw new UnauthorizedException(this.unRegisteredExcMessage);
+    }
+    return userDB;
+  }
 
-  //   const email = tokenInfo.email;
-
-  //   try {
-  //     const user = await this.usersService.getByEmail(email);
-
-  //     return this.handleRegisteredUser(user);
-  //   } catch (error) {
-  //     if (error.status !== 404) {
-  //       throw new error();
-  //     }
-
-  //     return this.registerUser(token, email);
-  //   }
-  // }
+  private unVerifiedExcMessage = { message: 'User has unverified email' };
+  private unRegisteredExcMessage = { message: 'User is not registered' };
 }
