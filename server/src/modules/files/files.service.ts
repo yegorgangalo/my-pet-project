@@ -14,6 +14,7 @@ export class FilesService {
     this.bucketS3 = new S3();
   }
 
+  //this for saving file on server
   async createFile(file: Express.Multer.File): Promise<string> {
     try {
       const uniqueFileName = this.createUniqueFileName(file.originalname);
@@ -32,6 +33,7 @@ export class FilesService {
     }
   }
 
+  //this for saving file in S3 bucket
   async uploadFileToS3(file: Express.Multer.File, prevFileName: string) {
     try {
       const uploadResult = await this.bucketS3

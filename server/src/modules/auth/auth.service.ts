@@ -8,8 +8,8 @@ import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from 'src/modules/users/users.service';
 import { MailService } from 'src/modules/mail/mail.service';
-import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { TokenService } from 'src/modules/token/token.service';
+import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { UserDto } from 'src/modules/users/dto/user.dto';
 
 @Injectable()
@@ -22,10 +22,7 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
-    const { accessToken, refreshToken } =
-      this.tokenService.generateTokens(user);
-    await this.tokenService.saveToken(user._id, refreshToken);
-    return { accessToken, refreshToken, user: new UserDto(user) };
+    return this.loginUser(user);
   }
 
   async logout(refreshToken: string) {
@@ -43,10 +40,7 @@ export class AuthService {
       throw new UnauthorizedException(this.unAuthExcMessage);
     }
     const userDB = await this.userService.getUserByEmail(userData.email);
-    const { accessToken, refreshToken } =
-      this.tokenService.generateTokens(userDB);
-    await this.tokenService.saveToken(userDB._id, refreshToken);
-    return { accessToken, refreshToken, user: new UserDto(userDB) };
+    return this.loginUser(userDB);
   }
 
   async registration(userDto: CreateUserDto) {
@@ -57,6 +51,12 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const user = await this.registerUser(userDto);
+    return this.loginUser(user);
+  }
+
+  async registerUser(userDto: CreateUserDto) {
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const activateAccountKey = uuidv4();
     const user = await this.userService.create({
@@ -65,10 +65,7 @@ export class AuthService {
       password: hashPassword,
     });
     this.mailService.sendActivationMail(userDto.email, activateAccountKey);
-    const { accessToken, refreshToken } =
-      this.tokenService.generateTokens(user);
-    await this.tokenService.saveToken(user._id, refreshToken);
-    return { accessToken, refreshToken, user: new UserDto(user) };
+    return user;
   }
 
   private async validateUser(userDto: CreateUserDto) {
@@ -84,6 +81,13 @@ export class AuthService {
       throw new UnauthorizedException(this.unAuthExcMessage);
     }
     return userDB;
+  }
+
+  async loginUser(user) {
+    const { accessToken, refreshToken } =
+      this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user._id, refreshToken);
+    return { accessToken, refreshToken, user: new UserDto(user) };
   }
 
   private unAuthExcMessage = { message: 'Wrong email or password' };

@@ -19,7 +19,7 @@ export class UserDto {
     this.name = user.name;
     this.email = user.email;
     // this.avatar = this.getEnvValue(ENV.SERVER_URL) + '/' + user.avatar;
-    this.avatar = this.getEnvValue(AWS.AWS_S3_BUCKET) + '/' + user.avatar;
+    this.avatar = this.getAvatarLink(user.avatar);
     this.roles = user.roles;
     this.isActivated = user.isActivated;
   }
@@ -30,5 +30,14 @@ export class UserDto {
 
   getEnvValue(envValue) {
     return this.configService.get<string>(envValue);
+  }
+
+  getAvatarLink(avatar) {
+    if (!avatar) {
+      return null;
+    }
+    return avatar.includes('http')
+      ? avatar
+      : this.getEnvValue(AWS.AWS_S3_BUCKET) + '/' + avatar;
   }
 }

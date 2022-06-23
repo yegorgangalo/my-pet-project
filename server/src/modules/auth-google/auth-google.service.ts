@@ -2,9 +2,14 @@ import { ENV } from '@mandruy/common/const';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
+import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from 'src/modules/users/users.service';
-import { TokenService } from 'src/modules/token/token.service';
-import { UserDto } from 'src/modules/users/dto/user.dto';
+import { AuthService } from 'src/modules/auth/auth.service';
+import { User } from 'src/modules/users/users.schema';
+
+interface NotRegUser {
+  isNotRegistered: boolean;
+}
 
 @Injectable()
 export class AuthGoogleService {
@@ -13,7 +18,7 @@ export class AuthGoogleService {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UsersService,
-    private tokenService: TokenService,
+    private authService: AuthService,
   ) {
     this.clientID = this.configService.get(ENV.GOOGLE_AUTH_CLIENT_ID);
     this.oAuth2Client = new OAuth2Client(this.clientID);
@@ -28,12 +33,18 @@ export class AuthGoogleService {
       });
 
       const payload = ticket.getPayload();
-      const { email, email_verified } = payload;
-      const user = await this.validateUser({ email, email_verified });
-      const { accessToken, refreshToken } =
-        this.tokenService.generateTokens(user);
-      await this.tokenService.saveToken(user._id, refreshToken);
-      return { accessToken, refreshToken, user: new UserDto(user) };
+      const { email, email_verified, name, picture } = payload;
+      const candidate = await this.validateUser({ email, email_verified });
+      const user = (candidate as NotRegUser).isNotRegistered
+        ? await this.authService.registerUser({
+            email,
+            name,
+            password: uuidv4(),
+            avatar: picture,
+            activateAccountKey: '', //how avoid this adding?
+          })
+        : (candidate as User);
+      return this.authService.loginUser(user);
     } catch (err) {
       console.log('google auth error:', err);
       return err;
@@ -45,12 +56,8 @@ export class AuthGoogleService {
       throw new UnauthorizedException(this.unVerifiedExcMessage);
     }
     const userDB = await this.userService.getUserByEmail(email);
-    if (!userDB) {
-      throw new UnauthorizedException(this.unRegisteredExcMessage);
-    }
-    return userDB;
+    return userDB || ({ isNotRegistered: true } as NotRegUser);
   }
 
   private unVerifiedExcMessage = { message: 'User has unverified email' };
-  private unRegisteredExcMessage = { message: 'User is not registered' };
 }

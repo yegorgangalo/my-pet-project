@@ -1,6 +1,7 @@
 import { useContext, FC } from "react"
 import { Typography, Button, TextField, Box } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
+import GoogleButton from "components/GoogleButton/GoogleButton";
 import PasswordTextField from '../../components/PasswordTextField'
 import { Context } from '../../store/Context'
 
@@ -17,9 +18,6 @@ const RegistrationPage: FC = () => {
   const onSubmit = (data: IRegisterData) => {
     store.registration(data.name, data.email, data.password)
   }
-
-  console.log('store=', {...store});
-
 
   return (
     <Box p={2}>
@@ -65,6 +63,7 @@ const RegistrationPage: FC = () => {
           )}
         />
         <Button type="submit" variant="contained">Register</Button>
+        <GoogleButton/>
       </Box>
     </Box>
   )
