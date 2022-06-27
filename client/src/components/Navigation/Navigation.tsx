@@ -1,10 +1,9 @@
-import { useContext, FC } from 'react';
+import { FC } from 'react';
 import { NavLink } from "react-router-dom";
 import Divider from '@mui/material/Divider'
 import Box from '@mui/material/Box'
-import { observer } from "mobx-react-lite";
-import { Context } from '../../store/Context'
-import UserMenu from '../../components/UserMenu';
+import { useTypedSelector } from 'hooks/useTypedRedux'
+import UserMenu from 'components/UserMenu';
 import s from './Navigation.module.scss';
 
 interface IswitchIsActive {
@@ -12,10 +11,10 @@ interface IswitchIsActive {
 }
 
 const Navigation: FC = () => {
-  const { store } = useContext(Context);
-  const isLoggedIn = store.isAuth
-  const isLoggedInAndActivated = store.isAuth && store.user.isActivated
-  const isLoggedInAndNotActivated = store.isAuth && !store.user.isActivated
+  const { isAuth, user } = useTypedSelector(state => state.user)
+  const isLoggedIn = isAuth
+  const isLoggedInAndActivated = isAuth && user.isActivated
+  const isLoggedInAndNotActivated = isAuth && !user.isActivated
 
   const switchIsActive = ({ isActive }: IswitchIsActive) => isActive ? s.activeLink : s.link
 
@@ -37,4 +36,4 @@ const Navigation: FC = () => {
   );
 }
 
-export default observer(Navigation)
+export default Navigation

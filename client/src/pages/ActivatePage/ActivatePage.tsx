@@ -1,14 +1,27 @@
-import { useContext, FC } from "react"
-import { observer } from "mobx-react-lite";
+import { FC, useState } from "react"
 import { Typography, Button, Box } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import { Context } from 'store/Context'
 import Spinner from "components/Spinner";
+import AuthService from 'services/AuthService'
+import { useTypedSelector } from 'hooks/useTypedRedux'
 
 const ActivatePage: FC = () => {
-  const { store } = useContext(Context)
-  const { email, _id, isActivated } = store.user
-  const sendActivationMail = () => store.sendActivationMail(_id)
+  const { user } = useTypedSelector(state => state.user)
+  const { email, _id, isActivated } = user
+
+  const [loading, setLoading] = useState(false)
+
+  const sendActivationMail = (userId: string) => async () => {
+    setLoading(true)
+    try {
+      await AuthService.sendActivationMail(userId)
+    } catch (err) {
+      console.log("error", (err as Error).message)
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const activatedNotification = 'Your account is already activated'
   const nonActivatedNotification = `Your account is not activated.
@@ -19,13 +32,13 @@ const ActivatePage: FC = () => {
     <Box p={2}>
       <Typography mb={2}>{isActivated ? activatedNotification : nonActivatedNotification}</Typography>
       <Button
-        onClick={sendActivationMail}
+        onClick={sendActivationMail(_id)}
         variant="contained"
-        endIcon={store.isLoading ? <Spinner/> : <SendIcon />}
-        disabled={store.isLoading}
+        endIcon={loading ? <Spinner/> : <SendIcon />}
+        disabled={loading}
       >Resend activation link</Button>
     </Box>
   )
 }
 
-export default observer(ActivatePage)
+export default ActivatePage

@@ -1,12 +1,12 @@
 import { ENV } from "@mandruy/common/const"
-import { useCallback, useEffect, useState, useContext } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { IGoogleWindow } from "interfaces/IGoogleWindow"
-import { Context } from "store/Context"
+import { useOperations } from "hooks/useTypedRedux"
 
 export const useGoogle = () => {
   const googleWindow = window as IGoogleWindow
   const [scriptLoaded, setScriptLoaded] = useState(false)
-  const { store } = useContext(Context)
+  const { googleAuth } = useOperations()
 
   const initializeGoogle = useCallback(() => {
     if (!googleWindow.google || scriptLoaded) {
@@ -19,13 +19,13 @@ export const useGoogle = () => {
           `REACT_APP_${ENV.GOOGLE_AUTH_CLIENT_ID}`
         ] as string,
         callback: (res: any) => {
-          store.googleLogin(res.credential)
+          googleAuth(res.credential)
         },
       })
     } catch (err) {
       console.log(err)
     }
-  }, [googleWindow, scriptLoaded, store])
+  }, [googleWindow, scriptLoaded, googleAuth])
 
   const addGoogleScript = useCallback(() => {
     const script = document.createElement("script")

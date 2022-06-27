@@ -1,5 +1,4 @@
-import { useContext, FC, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react-lite';
+import { FC, useState, MouseEvent } from 'react';
 import { NavLink } from "react-router-dom";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,11 +6,11 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Logout from '@mui/icons-material/Logout';
-import { Context } from '../../store/Context'
+import { useTypedSelector, useOperations } from 'hooks/useTypedRedux'
 
 const UserMenu: FC = () => {
-  const { store } = useContext(Context);
-  const { avatar } = store.user
+  const { user } = useTypedSelector(state => state.user)
+  const { logout } = useOperations()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -31,10 +30,10 @@ const UserMenu: FC = () => {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Avatar alt="avatar" src={avatar} />
+        <Avatar alt="avatar" src={user?.avatar} />
       </IconButton>
       <IconButton
-        onClick={() => store.logout()}
+        onClick={() => logout()}
         aria-label="log out"
       >
         <Logout />
@@ -52,10 +51,10 @@ const UserMenu: FC = () => {
           <NavLink to="/profile" style={({ isActive }) => isActive ? ({ color: "grey"}) : ({color: "inherit"})}>Profile</NavLink>
         </MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={() => store.logout()}>Logout</MenuItem>
+        <MenuItem onClick={() => logout()}>Logout</MenuItem>
       </Menu>
     </Box>
   );
 }
 
-export default observer(UserMenu)
+export default UserMenu

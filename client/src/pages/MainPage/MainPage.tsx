@@ -1,5 +1,4 @@
 import { FC } from "react"
-import { observer } from "mobx-react-lite";
 import { Typography, Box } from "@mui/material";
 
 const MainPage: FC = () => {
@@ -10,4 +9,4 @@ const MainPage: FC = () => {
   )
 }
 
-export default observer(MainPage)
+export default MainPage

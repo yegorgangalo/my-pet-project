@@ -1,10 +1,10 @@
-import { useState, useContext } from "react"
+import { useState, FC } from "react"
 import { IUser } from "interfaces/IUser";
 import UserService from 'services/UserService';
-import { Context } from 'store/Context'
+import { useTypedSelector } from 'hooks/useTypedRedux'
 
-export default function UsersPage() {
-  const { store } = useContext(Context)
+const UsersPage: FC = () => {
+  const { isAuth, user } = useTypedSelector(state => state.user)
 
   const [users, setUsers] = useState<IUser[]>([])
 
@@ -19,7 +19,7 @@ export default function UsersPage() {
 
   return (
     <div>
-      <h1>User {store.user?.name} is {store.isAuth ? 'authorized' : 'unauthorized'}</h1>
+      <h1>User {user?.name} is {isAuth ? 'authorized' : 'unauthorized'}</h1>
       <button onClick={() => fetchUsers()}>get users list</button>
       {!users.length ? null : (
         <ul>
@@ -36,3 +36,5 @@ export default function UsersPage() {
     </div>
   )
 }
+
+export default UsersPage

@@ -1,17 +1,17 @@
-import { useContext, FC, useCallback } from "react"
+import { FC, useCallback } from "react"
 import { useSnackbar } from 'notistack'
-import { observer } from "mobx-react-lite";
 import { Typography, Box } from "@mui/material";
 import { useDropzone } from 'react-dropzone'
 import imageCompression from 'browser-image-compression';
-import { Context } from 'store/Context'
+import { useTypedSelector, useOperations } from 'hooks/useTypedRedux'
 import Spinner from "components/Spinner";
 import styles from './ProfilePage.module.scss'
 
 const ProfilePage: FC = () => {
   const { enqueueSnackbar } = useSnackbar()
-  const { store } = useContext(Context)
-  const { name, _id } = store.user
+  const { updateUserAvatar } = useOperations()
+  const { isLoading, user } = useTypedSelector(state => state.user)
+  const { name, _id } = user
 
   const onDrop = useCallback(async (files: any) => {
     try {
@@ -33,14 +33,14 @@ const ProfilePage: FC = () => {
 
       const formData = new FormData()
       formData.append('file', compressedFile, compressedFile.name)
-      await store.updateUserAvatar(_id, formData)
+      await updateUserAvatar(_id, formData)
       enqueueSnackbar('File is uploaded', {variant: 'success'})
     } catch (err) {
       console.log((err as Error).message)
       enqueueSnackbar('File is not uploaded. try again', {variant: 'error'})
     }
 
-  }, [enqueueSnackbar, _id, store])
+  }, [enqueueSnackbar, updateUserAvatar, _id])
 
   const {getRootProps, getInputProps, isDragActive} = useDropzone({ onDrop })
 
@@ -52,10 +52,10 @@ const ProfilePage: FC = () => {
       <Typography mb={2}>Update avatar photo:</Typography>
       <Box className={styles.dropZone} {...getRootProps()}>
         <input {...getInputProps()} />
-        {store.isLoading ? <Spinner/> : <Typography>{dragZoneText}</Typography>}
+        {isLoading ? <Spinner/> : <Typography>{dragZoneText}</Typography>}
       </Box>
     </Box>
   )
 }
 
-export default observer(ProfilePage)
+export default ProfilePage

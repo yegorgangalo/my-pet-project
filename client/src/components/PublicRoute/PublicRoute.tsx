@@ -1,7 +1,6 @@
-import { useContext, FC, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { observer } from "mobx-react-lite";
-import { Context } from '../../store/Context'
+import { useTypedSelector } from 'hooks/useTypedRedux'
 
 interface PublicRouteProps {
   component: ReactNode,
@@ -9,9 +8,11 @@ interface PublicRouteProps {
   redirectTo?: string,
 }
 
-const PublicRoute: FC<PublicRouteProps> = ({ component, restricted = false, redirectTo = '/' }) => {
-  const { store } = useContext(Context)
-  const isLoggedIn = store.isAuth
+const PublicRoute: FC<PublicRouteProps> = (props) => {
+  const { component, restricted = false, redirectTo = '/' } = props
+
+  const { isAuth } = useTypedSelector(state => state.user)
+  const isLoggedIn = isAuth
   const shouldRedirect = isLoggedIn && restricted;
 
   return (<>
@@ -20,4 +21,4 @@ const PublicRoute: FC<PublicRouteProps> = ({ component, restricted = false, redi
   );
 }
 
-export default observer(PublicRoute)
+export default PublicRoute

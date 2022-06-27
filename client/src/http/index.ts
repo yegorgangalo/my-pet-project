@@ -1,6 +1,6 @@
 import { ENV, LS } from "@mandruy/common/const"
 import axios from "axios"
-import { store } from "../store/store"
+import { refreshToken } from "../redux/user/operations"
 
 const API = axios.create({
   withCredentials: true,
@@ -22,7 +22,7 @@ API.interceptors.response.use(
       const originalRequest = err.config
       if (err.response.status === 403 && !err.config?._isRetry) {
         originalRequest._isRetry = true
-        store.refreshToken()
+        refreshToken()
         return API.request(originalRequest)
       }
     } catch (err) {

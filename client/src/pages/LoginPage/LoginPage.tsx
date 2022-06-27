@@ -1,9 +1,9 @@
-import { useContext, FC } from "react"
+import { FC } from "react"
 import { Typography, Button, TextField, Box } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
 import PasswordTextField from 'components/PasswordTextField'
 import GoogleButton from "components/GoogleButton/GoogleButton";
-import { Context } from '../../store/Context'
+import { useOperations } from 'hooks/useTypedRedux'
 
 interface ILoginData {
   password: string;
@@ -11,11 +11,11 @@ interface ILoginData {
 }
 
 const LoginPage: FC = () => {
-  const { store } = useContext(Context)
+  const { login } = useOperations()
   const { control, handleSubmit } = useFormContext<ILoginData>()
 
   const onSubmit = (data: ILoginData) => {
-    store.login(data.email, data.password)
+    login(data.email, data.password)
   }
 
   return (

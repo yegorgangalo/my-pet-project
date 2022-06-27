@@ -1,9 +1,8 @@
 import { ROLES } from "@mandruy/common/const"
 import { IRole } from "interfaces/IRole";
-import { useContext, FC, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { observer } from "mobx-react-lite";
-import { Context } from '../../store/Context'
+import { useTypedSelector } from 'hooks/useTypedRedux'
 
 interface PrivateRouteProps {
   component: ReactNode,
@@ -13,10 +12,18 @@ interface PrivateRouteProps {
   userRoles?: IRole[],
 }
 
-const PublicRoute: FC<PrivateRouteProps> = ({ component, redirectTo = '/', noActivation = false, allowedRoles = [ROLES.GUEST], userRoles = [{ value: ROLES.GUEST }] }) => {
-  const { store } = useContext(Context)
+const PublicRoute: FC<PrivateRouteProps> = (props) => {
+  const {
+    component,
+    redirectTo = '/',
+    noActivation = false,
+    allowedRoles = [ROLES.GUEST],
+    userRoles = [{ value: ROLES.GUEST }]
+  } = props
 
-  if (!store.isLoadedBE) {
+  const { isAuth, isLoadedBE, user } = useTypedSelector(state => state.user)
+
+  if (!isLoadedBE) {
     return <></>
   }
 
@@ -24,7 +31,8 @@ const PublicRoute: FC<PrivateRouteProps> = ({ component, redirectTo = '/', noAct
 
   const hasUserAccessByRole = allowedRoles.some(role => normalizedUserRoles.includes(role))
 
-  const isLoggedIn = noActivation ? store.isAuth : (store.isAuth && store.user.isActivated)
+  // const isLoggedIn = noActivation ? isAuth : (isAuth && user.isActivated)
+  const isLoggedIn = (noActivation && isAuth) ? !user.isActivated : user.isActivated
   const hasAccess = hasUserAccessByRole && isLoggedIn
 
   return (<>
@@ -33,4 +41,4 @@ const PublicRoute: FC<PrivateRouteProps> = ({ component, redirectTo = '/', noAct
   );
 }
 
-export default observer(PublicRoute)
+export default PublicRoute
