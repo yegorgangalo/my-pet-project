@@ -5,9 +5,14 @@ import { IAuthResponse } from "interfaces/IAuthResponse"
 export default class AuthService {
   static async login(
     email: string,
-    password: string
+    password: string,
+    signal: AbortSignal
   ): Promise<AxiosResponse<IAuthResponse>> {
-    return API.post<IAuthResponse>("/auth/login", { email, password })
+    return API.post<IAuthResponse>(
+      "/auth/login",
+      { email, password },
+      { signal }
+    )
   }
 
   static async registration(

@@ -1,4 +1,5 @@
 import { IUser } from "interfaces/IUser"
+import { Reducer } from "redux"
 import { UserState, UserAction, UserActionTypes } from "redux/types/user"
 
 const initialState: UserState = {
@@ -9,10 +10,10 @@ const initialState: UserState = {
   error: null,
 }
 
-export const userReducer = (
+export const userReducer: Reducer<UserState, UserAction> = (
   state = initialState,
-  action: UserAction
-): UserState => {
+  action
+) => {
   switch (action.type) {
     case UserActionTypes.SET_IS_LOADED_BE:
       return { ...state, isLoadedBE: true }

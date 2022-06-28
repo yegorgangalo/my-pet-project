@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
-import createSagaMiddleware from "redux-saga"
+import createSagaMiddleware, { Saga } from "redux-saga"
 import rootReducer from "./rootReducer"
 import { rootSagaWatcher } from "./rootSagaWatcher"
 
@@ -11,4 +11,4 @@ export const store = createStore(
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 )
 
-sagaMiddleware.run(rootSagaWatcher)
+sagaMiddleware.run(rootSagaWatcher as Saga<Generator[]>)

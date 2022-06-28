@@ -1,13 +1,23 @@
 import { LS } from "@mandruy/common/const"
-import { put, takeEvery, call, takeLeading } from "redux-saga/effects"
+import {
+  put,
+  takeEvery,
+  call,
+  takeLeading,
+  take,
+  cancel,
+  fork,
+} from "redux-saga/effects"
+import { Task } from "redux-saga"
 import { UserActionTypes } from "redux/types/user"
-import { AxiosError } from "axios"
+import { AxiosError, AxiosResponse } from "axios"
 import { refreshToken } from "http/API"
 import { getErrorMessage } from "utils/helpers"
 import AuthService from "services/AuthService"
 import GoogleService from "services/GoogleService"
 import UserService from "services/UserService"
 import { IUser } from "interfaces/IUser"
+import { IAuthResponse } from "interfaces/IAuthResponse"
 import {
   GoogleAuthAction,
   RegisterAction,
@@ -15,13 +25,36 @@ import {
   UpdateUserAvatarAction,
 } from "./userActions"
 
+function* abortIdenticalRequestWorker(
+  actionType: UserActionTypes,
+  worker: any
+) {
+  let task: Task | null = null
+  let abortController = new AbortController()
+
+  while (true) {
+    const payload: LoginAction = yield take(actionType)
+    if (task) {
+      abortController.abort()
+      yield cancel(task as Task)
+      task = null
+      abortController = new AbortController()
+    }
+    task = yield fork(worker, payload, abortController.signal)
+  }
+}
+
 export function* userWatcher() {
   yield takeLeading(UserActionTypes.CHECK_AUTH, checkAuthWorker)
-  yield takeEvery(UserActionTypes.GOOGLE_AUTH, googleAuth)
-  yield takeEvery(UserActionTypes.REGISTRATION_USER, registration)
-  yield takeEvery(UserActionTypes.LOGIN_USER, login)
-  yield takeEvery(UserActionTypes.LOGOUT_USER, logout)
-  yield takeEvery(UserActionTypes.UPDATE_USER_AVATAR, updateUserAvatar)
+  yield takeEvery(UserActionTypes.GOOGLE_AUTH, googleAuthWorker)
+  yield takeEvery(UserActionTypes.REGISTRATION_USER, registrationWorker)
+  yield takeEvery(UserActionTypes.LOGOUT_USER, logoutWorker)
+  yield takeEvery(UserActionTypes.UPDATE_USER_AVATAR, updateUserAvatarWorker)
+  // yield abortIdenticalRequestWorker(UserActionTypes.LOGIN_USER, loginWorker) //blocks next under
+}
+
+export function* userLoginWatcher() {
+  yield abortIdenticalRequestWorker(UserActionTypes.LOGIN_USER, loginWorker) //blocks next under
 }
 
 //--------------check auth-------------------
@@ -55,12 +88,16 @@ const setGoogleAuthError = (error: string) => ({
   payload: error,
 })
 
-export function* googleAuth(action: GoogleAuthAction) {
+function* googleAuthWorker(action: GoogleAuthAction) {
   try {
     yield put(setGoogleAuthStart())
-    const { data } = yield call(GoogleService.login, action.payload)
-    localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
-    yield put(setGoogleAuthSuccess(data.user))
+    const res: AxiosResponse<IAuthResponse> = yield call(
+      GoogleService.login,
+      action.payload
+    )
+    const { accessToken, user } = res.data
+    localStorage.setItem(LS.ACCESS_TOKEN, accessToken)
+    yield put(setGoogleAuthSuccess(user))
   } catch (err) {
     yield put(setGoogleAuthError(getErrorMessage(err as AxiosError)))
   }
@@ -80,20 +117,26 @@ const setRegistrationError = (error: string) => ({
   payload: error,
 })
 
-export function* registration(action: RegisterAction) {
+function* registrationWorker(action: RegisterAction) {
   const { name, email, password } = action.payload
   try {
     yield put(setRegistrationStart())
-    const { data } = yield call(AuthService.registration, name, email, password)
-    localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
-    yield put(setRegistrationSuccess(data.user))
+    const res: AxiosResponse<IAuthResponse> = yield call(
+      AuthService.registration,
+      name,
+      email,
+      password
+    )
+    const { accessToken, user } = res.data
+    localStorage.setItem(LS.ACCESS_TOKEN, accessToken)
+    yield put(setRegistrationSuccess(user))
   } catch (err) {
     yield put(setRegistrationError(getErrorMessage(err as AxiosError)))
   }
 }
 //--------------------------------------------
 
-//-----------------login----------------------
+//-----------------loginWorker----------------------
 const setLoginStart = () => ({
   type: UserActionTypes.LOGIN_USER_START,
 })
@@ -106,13 +149,19 @@ const setLoginError = (error: string) => ({
   payload: error,
 })
 
-export function* login(action: LoginAction) {
+function* loginWorker(action: LoginAction, signal: AbortSignal) {
   const { email, password } = action.payload
   try {
     yield put(setLoginStart())
-    const { data } = yield call(AuthService.login, email, password)
-    localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
-    yield put(setLoginSuccess(data.user))
+    const res: AxiosResponse<IAuthResponse> = yield call(
+      AuthService.login,
+      email,
+      password,
+      signal
+    )
+    const { accessToken, user } = res.data
+    localStorage.setItem(LS.ACCESS_TOKEN, accessToken)
+    yield put(setLoginSuccess(user))
   } catch (err) {
     yield put(setLoginError(getErrorMessage(err as AxiosError)))
   }
@@ -131,7 +180,9 @@ const setLogoutError = (error: string) => ({
   payload: error,
 })
 
-export function* logout() {
+function* logoutWorker() {
+  console.log("logoutWorker")
+
   yield put(setLogoutStart())
   try {
     yield call(AuthService.logout)
@@ -156,12 +207,16 @@ const setUpdateUserAvatarError = (error: string) => ({
   payload: error,
 })
 
-export function* updateUserAvatar(action: UpdateUserAvatarAction) {
+function* updateUserAvatarWorker(action: UpdateUserAvatarAction) {
   const { userId, formData } = action.payload
   try {
     yield put(setUpdateUserAvatarStart())
-    const { data } = yield call(UserService.uploadAvatar, userId, formData)
-    yield put(setUpdateUserAvatarSuccess(data))
+    const res: AxiosResponse = yield call(
+      UserService.uploadAvatar,
+      userId,
+      formData
+    )
+    yield put(setUpdateUserAvatarSuccess(res.data))
   } catch (err) {
     yield put(setUpdateUserAvatarError(getErrorMessage(err as AxiosError)))
   }
