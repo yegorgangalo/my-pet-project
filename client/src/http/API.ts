@@ -1,6 +1,15 @@
 import { ENV, LS } from "@mandruy/common/const"
 import axios from "axios"
-import { refreshToken } from "../redux/user/operations"
+import { IAuthResponse } from "interfaces/IAuthResponse"
+
+export const refreshToken = async () => {
+  const { data } = await axios.get<IAuthResponse>(
+    `${process.env[`REACT_APP_${ENV.SERVER_URL}`]}/auth/refresh`,
+    { withCredentials: true }
+  )
+  localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
+  return data.user
+}
 
 const API = axios.create({
   withCredentials: true,

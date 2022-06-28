@@ -1,6 +1,6 @@
-import API from "../http"
+import API from "http/API"
 import { AxiosResponse } from "axios"
-import { IAuthResponse } from "../interfaces/IAuthResponse"
+import { IAuthResponse } from "interfaces/IAuthResponse"
 
 export default class AuthService {
   static async login(

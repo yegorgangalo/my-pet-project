@@ -1,4 +1,4 @@
-import API from "../http"
+import API from "http/API"
 import { AxiosResponse } from "axios"
 import { IAuthResponse } from "../interfaces/IAuthResponse"
 

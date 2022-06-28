@@ -3,19 +3,15 @@ import { Typography, Button, TextField, Box } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
 import PasswordTextField from 'components/PasswordTextField'
 import GoogleButton from "components/GoogleButton/GoogleButton";
-import { useOperations } from 'hooks/useTypedRedux'
-
-interface ILoginData {
-  password: string;
-  email: string
-}
+import { useDispatchActions } from 'hooks/useTypedRedux'
+import { ILoginData } from 'interfaces/ILoginData'
 
 const LoginPage: FC = () => {
-  const { login } = useOperations()
+  const { login } = useDispatchActions()
   const { control, handleSubmit } = useFormContext<ILoginData>()
 
   const onSubmit = (data: ILoginData) => {
-    login(data.email, data.password)
+    login(data)
   }
 
   return (

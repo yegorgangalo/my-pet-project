@@ -1,12 +1,12 @@
 import { ENV } from "@mandruy/common/const"
 import { useCallback, useEffect, useState } from "react"
 import { IGoogleWindow } from "interfaces/IGoogleWindow"
-import { useOperations } from "hooks/useTypedRedux"
+import { useDispatchActions } from "hooks/useTypedRedux"
 
 export const useGoogle = () => {
   const googleWindow = window as IGoogleWindow
   const [scriptLoaded, setScriptLoaded] = useState(false)
-  const { googleAuth } = useOperations()
+  const { googleAuth } = useDispatchActions()
 
   const initializeGoogle = useCallback(() => {
     if (!googleWindow.google || scriptLoaded) {

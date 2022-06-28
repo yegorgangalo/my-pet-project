@@ -3,13 +3,13 @@ import { useSnackbar } from 'notistack'
 import { Typography, Box } from "@mui/material";
 import { useDropzone } from 'react-dropzone'
 import imageCompression from 'browser-image-compression';
-import { useTypedSelector, useOperations } from 'hooks/useTypedRedux'
+import { useTypedSelector, useDispatchActions } from 'hooks/useTypedRedux'
 import Spinner from "components/Spinner";
 import styles from './ProfilePage.module.scss'
 
 const ProfilePage: FC = () => {
   const { enqueueSnackbar } = useSnackbar()
-  const { updateUserAvatar } = useOperations()
+  const { updateUserAvatar } = useDispatchActions()
   const { isLoading, user } = useTypedSelector(state => state.user)
   const { name, _id } = user
 
@@ -20,7 +20,7 @@ const ProfilePage: FC = () => {
         return
       }
       if (files.length > 1) {
-        enqueueSnackbar('load files one by one', { variant: 'info' })
+        enqueueSnackbar('you can load only one image a time', { variant: 'info' })
       }
 
       const options = {
@@ -33,7 +33,7 @@ const ProfilePage: FC = () => {
 
       const formData = new FormData()
       formData.append('file', compressedFile, compressedFile.name)
-      await updateUserAvatar(_id, formData)
+      await updateUserAvatar({ userId: _id, formData })
       enqueueSnackbar('File is uploaded', {variant: 'success'})
     } catch (err) {
       console.log((err as Error).message)

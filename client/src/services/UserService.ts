@@ -1,6 +1,6 @@
-import API from "../http"
+import API from "http/API"
 import { AxiosResponse } from "axios"
-import { IUser } from "../interfaces/IUser"
+import { IUser } from "interfaces/IUser"
 
 export default class UserService {
   static async fetchUsers(): Promise<AxiosResponse<IUser[]>> {

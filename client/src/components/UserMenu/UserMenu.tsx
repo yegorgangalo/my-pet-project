@@ -6,11 +6,11 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Logout from '@mui/icons-material/Logout';
-import { useTypedSelector, useOperations } from 'hooks/useTypedRedux'
+import { useTypedSelector, useDispatchActions } from 'hooks/useTypedRedux'
 
 const UserMenu: FC = () => {
   const { user } = useTypedSelector(state => state.user)
-  const { logout } = useOperations()
+  const { logout } = useDispatchActions()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

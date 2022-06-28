@@ -2,21 +2,16 @@ import { FC } from "react"
 import { Typography, Button, TextField, Box } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
 import GoogleButton from "components/GoogleButton/GoogleButton";
-import PasswordTextField from '../../components/PasswordTextField'
-import { useOperations } from 'hooks/useTypedRedux'
-
-interface IRegisterData {
-  name: string;
-  email: string
-  password: string;
-}
+import PasswordTextField from 'components/PasswordTextField'
+import { useDispatchActions } from 'hooks/useTypedRedux'
+import { IRegisterData } from 'interfaces/IRegisterData'
 
 const RegistrationPage: FC = () => {
-  const { registration } = useOperations()
+  const { register } = useDispatchActions()
   const { control, handleSubmit } = useFormContext<IRegisterData>()
 
   const onSubmit = (data: IRegisterData) => {
-    registration(data.name, data.email, data.password)
+    register(data)
   }
 
   return (
