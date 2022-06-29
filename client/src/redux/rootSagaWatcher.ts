@@ -1,5 +1,5 @@
 import { all, spawn, call } from "redux-saga/effects"
-import { userWatcher, userLoginWatcher } from "./user/userSaga"
+import { userWatcher } from "./user/userSaga"
 // import * as userWatchers from "./user/userSaga"
 // const sagaWatchers = Object.values(userWatchers)
 
@@ -14,7 +14,7 @@ import { userWatcher, userLoginWatcher } from "./user/userSaga"
 
 /* sagas autorestarter with catch errors */
 export function* rootSagaWatcher() {
-  const sagaWatchers = [userWatcher, userLoginWatcher]
+  const sagaWatchers = [userWatcher]
   const retrySagaWatchers: Generator[] = yield sagaWatchers.map(
     (sagaWatcher) => {
       return spawn(function* () {
@@ -23,7 +23,7 @@ export function* rootSagaWatcher() {
             yield call(sagaWatcher)
             break
           } catch (err) {
-            console.log(err)
+            console.log("Saga watcher error >> ", err)
           }
         }
       })

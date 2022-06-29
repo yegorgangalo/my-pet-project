@@ -25,7 +25,7 @@ import {
   UpdateUserAvatarAction,
 } from "./userActions"
 
-function* abortIdenticalRequestWorker(
+function* abortIdenticalRequestTakeEvery(
   actionType: UserActionTypes,
   worker: any
 ) {
@@ -50,11 +50,11 @@ export function* userWatcher() {
   yield takeEvery(UserActionTypes.REGISTRATION_USER, registrationWorker)
   yield takeEvery(UserActionTypes.LOGOUT_USER, logoutWorker)
   yield takeEvery(UserActionTypes.UPDATE_USER_AVATAR, updateUserAvatarWorker)
-  // yield abortIdenticalRequestWorker(UserActionTypes.LOGIN_USER, loginWorker) //blocks next under
-}
-
-export function* userLoginWatcher() {
-  yield abortIdenticalRequestWorker(UserActionTypes.LOGIN_USER, loginWorker) //blocks next under
+  yield fork(
+    abortIdenticalRequestTakeEvery,
+    UserActionTypes.LOGIN_USER,
+    loginWorker
+  )
 }
 
 //--------------check auth-------------------
