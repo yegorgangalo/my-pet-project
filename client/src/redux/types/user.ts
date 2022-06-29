@@ -1,11 +1,11 @@
 import { IUser } from "interfaces/IUser"
 
 export interface UserState {
-  user: IUser
-  isAuth: boolean
-  isLoadedBE: boolean
-  isLoading: boolean
-  error: null | string
+  readonly user: IUser
+  readonly isAuth: boolean
+  readonly isLoadedBE: boolean
+  readonly isLoading: boolean
+  readonly error: null | string
 }
 
 export enum UserActionTypes {
