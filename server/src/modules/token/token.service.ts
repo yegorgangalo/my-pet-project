@@ -58,10 +58,14 @@ export class TokenService {
   }
 
   async removeToken(refreshToken: string) {
-    const removedToken = await this.tokenModel.findOneAndRemove({
-      refreshToken,
-    });
-    return removedToken._id;
+    try {
+      const removedToken = await this.tokenModel.findOneAndRemove({
+        refreshToken,
+      });
+      return removedToken._id;
+    } catch (err) {
+      console.log('token service removeToken error >>> ', err);
+    }
   }
 
   async findToken(refreshToken: string) {

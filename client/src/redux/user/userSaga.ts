@@ -25,7 +25,12 @@ import {
   UpdateUserAvatarAction,
 } from "./userActions"
 
-function* abortIdenticalRequestTakeEvery(
+interface IPayload {
+  type: UserActionTypes
+  payload?: any
+}
+
+function* takeLatestWithAbortPrevRequests(
   actionType: UserActionTypes,
   worker: any
 ) {
@@ -33,7 +38,7 @@ function* abortIdenticalRequestTakeEvery(
   let abortController = new AbortController()
 
   while (true) {
-    const payload: LoginAction = yield take(actionType)
+    const payload: IPayload = yield take(actionType)
     if (task) {
       abortController.abort()
       yield cancel(task as Task)
@@ -46,12 +51,12 @@ function* abortIdenticalRequestTakeEvery(
 
 export function* userWatcher() {
   yield takeLeading(UserActionTypes.CHECK_AUTH, checkAuthWorker)
-  yield takeEvery(UserActionTypes.GOOGLE_AUTH, googleAuthWorker)
-  yield takeEvery(UserActionTypes.REGISTRATION_USER, registrationWorker)
-  yield takeEvery(UserActionTypes.LOGOUT_USER, logoutWorker)
+  yield takeLeading(UserActionTypes.GOOGLE_AUTH, googleAuthWorker)
+  yield takeLeading(UserActionTypes.REGISTRATION_USER, registrationWorker)
+  yield takeLeading(UserActionTypes.LOGOUT_USER, logoutWorker)
   yield takeEvery(UserActionTypes.UPDATE_USER_AVATAR, updateUserAvatarWorker)
   yield fork(
-    abortIdenticalRequestTakeEvery,
+    takeLatestWithAbortPrevRequests,
     UserActionTypes.LOGIN_USER,
     loginWorker
   )
@@ -181,8 +186,6 @@ const setLogoutError = (error: string) => ({
 })
 
 function* logoutWorker() {
-  console.log("logoutWorker")
-
   yield put(setLogoutStart())
   try {
     yield call(AuthService.logout)
