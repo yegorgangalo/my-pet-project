@@ -64,7 +64,7 @@ export class TokenService {
       });
       return removedToken._id;
     } catch (err) {
-      console.log('token service removeToken error >>> ', err);
+      console.log('token service removeToken error >>> ', err.message);
     }
   }
 

@@ -46,7 +46,7 @@ export class AuthGoogleService {
         : (candidate as User);
       return this.authService.loginUser(user);
     } catch (err) {
-      console.log('google auth error:', err);
+      console.log('google auth error:', err.message);
       return err;
     }
   }
