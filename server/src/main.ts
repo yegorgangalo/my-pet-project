@@ -8,7 +8,7 @@ import { addSwaggerApiDocumentation } from 'src/utils/addSwaggerApiDoc';
 
 const bootstrap = async () => {
   try {
-    const PORT = process.env.SERVER_PORT || 5001;
+    const PORT = process.env.SERVER_PORT || 5002;
     const app = await NestFactory.create(AppModule);
 
     addSwaggerApiDocumentation(app);
@@ -28,7 +28,7 @@ const bootstrap = async () => {
 
     await app.listen(PORT, () => console.log(`server started on PORT ${PORT}`));
   } catch (e) {
-    console.log(e);
+    console.log('app error:', e);
   }
 };
 

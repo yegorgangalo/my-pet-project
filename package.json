@@ -13,7 +13,7 @@
   "scripts": {
     "server": "bolt w server run dev",
     "client": "bolt w client run dev",
-    "clean": "rm -rf node_modules"
+    "init": "rm -rf node_modules && bolt install"
   },
   "author": "yegorgangalo",
   "license": "ISC",
