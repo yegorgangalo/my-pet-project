@@ -14,6 +14,7 @@ const ActivatePage = lazy(() => import('./pages/ActivatePage' /* webpackChunkNam
 const UsersPage = lazy(() => import('./pages/UsersPage' /* webpackChunkName: "userspage" */));
 const LoginPage = lazy(() => import('./pages/LoginPage' /* webpackChunkName: "loginpage" */));
 const RegisterPage = lazy(() => import('./pages/RegisterPage' /* webpackChunkName: "registerpage" */));
+const AudioToText = lazy(() => import('./pages/AudioToText' /* webpackChunkName: "audiototextpage" */));
 
 function App() {
   const { checkAuth, setIsLoadedBE } = useDispatchActions()
@@ -45,6 +46,7 @@ function App() {
             <Route path="/register" element={<PublicRoute component={<RegisterPage/>} restricted redirectTo="/activate"/>} />
             <Route path="/activate" element={<PrivateRoute component={<ActivatePage/>} noActivation redirectTo={"/users"}/>} />
             <Route path="/users" element={<PrivateRoute component={<UsersPage/>} allowedRoles={[ROLES.TOURIST]} userRoles={user.roles} />} />
+            <Route path="/audio-to-text" element={<PrivateRoute component={<AudioToText/>} allowedRoles={[ROLES.TOURIST]} userRoles={user.roles} />} />
             <Route path="/profile" element={<PrivateRoute component={<ProfilePage/>}/>} />
             <Route path="/" element={<PublicRoute component={<MainPage/>} />} />
           </Routes>

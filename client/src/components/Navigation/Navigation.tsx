@@ -21,8 +21,10 @@ const Navigation: FC = () => {
   return (<>
     <Box component="header" display="flex" alignItems="center" justifyContent="space-between" minHeight="60px">
       <nav>
-        {isLoggedInAndActivated &&
-          <NavLink to="/users" className={switchIsActive}>Users</NavLink>}
+        {isLoggedInAndActivated && <>
+          <NavLink to="/users" className={switchIsActive}>Users</NavLink>
+          <NavLink to="/audio-to-text" className={switchIsActive}>Audio</NavLink>
+        </>}
         {!isLoggedIn && (<>
           <NavLink to="/login" className={switchIsActive}>Log In</NavLink>
           <NavLink to="/register" className={switchIsActive}>Register</NavLink>

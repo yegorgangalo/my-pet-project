@@ -5,11 +5,12 @@ import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { AppModule } from 'src/modules/app.module';
 import { runInCluster } from 'src/utils/runInCluster';
 import { addSwaggerApiDocumentation } from 'src/utils/addSwaggerApiDoc';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 const bootstrap = async () => {
   try {
     const PORT = process.env.SERVER_PORT || 5002;
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     addSwaggerApiDocumentation(app);
 
