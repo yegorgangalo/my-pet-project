@@ -9,10 +9,9 @@ import {
   UseGuards,
   Res,
   UseInterceptors,
-  CacheKey,
-  CacheTTL,
   UploadedFile,
 } from '@nestjs/common';
+import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

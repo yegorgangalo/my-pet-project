@@ -13,6 +13,7 @@ import { TokenModule } from './token/token.module';
 import { HttpCacheModule } from './http-cache/http-cache.module';
 import { FilesModule } from './files/files.module';
 import { AuthGoogleModule } from './auth-google/auth-google.module';
+import { VoiceToTextModule } from './voice-to-text/voice-to-text.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AuthGoogleModule } from './auth-google/auth-google.module';
     HttpCacheModule,
     FilesModule,
     AuthGoogleModule,
+    VoiceToTextModule,
   ],
 })
 export class AppModule {}

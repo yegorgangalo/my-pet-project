@@ -54,11 +54,11 @@ const AudioToText = () => {
       setConnection(socket);
     });
 
-    socket.emit("send_message", "hello world");
+    socket.emit("msgToServer", "hello world");
 
     socket.emit("startGoogleCloudStream");
 
-    socket.on("receive_message", (data) => {
+    socket.on("msgToClient", (data) => {
       console.log("received message", data);
     });
 
