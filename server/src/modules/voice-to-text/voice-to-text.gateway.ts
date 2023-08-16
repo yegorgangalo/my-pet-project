@@ -15,8 +15,10 @@ import { VoiceToTextService } from './voice-to-text.service';
 export class VoiceToTextGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  private voiceToTextService = new VoiceToTextService(); //cant inject in constructor
-  private logger: Logger = new Logger('VoiceToTextGateway');
+  constructor(
+    private voiceToTextService: VoiceToTextService,
+    private logger: Logger,
+  ) {}
 
   @WebSocketServer()
   server: socketIo.Server;
@@ -55,7 +57,6 @@ export class VoiceToTextGateway
 
   @SubscribeMessage('send_audio_data')
   handleSendAudioData(@MessageBody() audioData: { audio: any }): void {
-    // this.logger.log('** get audio data **\n');
     this.voiceToTextService.writeAudioData(audioData);
     this.server.emit('msgToClient', 'Got audio data');
   }
