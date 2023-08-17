@@ -9,6 +9,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { OnEvent } from '@nestjs/event-emitter';
 import { VoiceToTextService } from './voice-to-text.service';
 
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -46,7 +47,7 @@ export class VoiceToTextGateway
   @SubscribeMessage('startGoogleCloudStream')
   async handleStartGoogleCloudStream(): Promise<void> {
     this.logger.log(`startGoogleCloudStream socket event`);
-    this.voiceToTextService.startRecognitionStream(this.server);
+    this.voiceToTextService.startRecognitionStream();
   }
 
   @SubscribeMessage('endGoogleCloudStream')
@@ -59,5 +60,10 @@ export class VoiceToTextGateway
   handleSendAudioData(@MessageBody() audioData: { audio: any }): void {
     this.voiceToTextService.writeAudioData(audioData);
     this.server.emit('msgToClient', 'Got audio data');
+  }
+
+  @OnEvent('receive_google_audio_text')
+  handleEvent(data: { text: string; isFinal: boolean }) {
+    this.server.emit('receive_audio_text', data);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import googleSpeech from '@google-cloud/speech';
 
 @Injectable()
@@ -25,19 +26,19 @@ export class VoiceToTextService {
     interimResults: true,
   };
 
-  constructor() {
+  constructor(private eventEmitter: EventEmitter2) {
     process.env.GOOGLE_APPLICATION_CREDENTIALS = './speech-to-text-key.json';
     if (!this.speechClient) {
       this.speechClient = new googleSpeech.SpeechClient();
     }
   }
 
-  async startRecognitionStream(socketServer) {
+  async startRecognitionStream() {
     console.log('* StartRecognitionStream\n');
     try {
       this.recognizeStream = this.speechClient
         .streamingRecognize(this.REQUEST_OPTIONS)
-        .on('error', err => {
+        .on('error', (err: Error) => {
           console.error('streamingRecognize onerror:', err.message);
         })
         .on('data', data => {
@@ -50,7 +51,7 @@ export class VoiceToTextService {
 
           console.log(`Transcription: `, transcription);
 
-          socketServer.emit('receive_audio_text', {
+          this.eventEmitter.emit('receive_google_audio_text', {
             text: transcription,
             isFinal,
           });
@@ -58,9 +59,9 @@ export class VoiceToTextService {
           // if end of utterance, let's restart stream
           // this is a small hack to keep restarting the stream on the server and keep the connection with Google api
           // Google api disconnects the stream every five minutes
-          if (data.results[0] && data.results[0].isFinal) {
+          if (isFinal) {
             this.stopRecognitionStream();
-            this.startRecognitionStream(socketServer);
+            this.startRecognitionStream();
             console.log('restarted stream serverside');
           }
         });
