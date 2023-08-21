@@ -1,6 +1,8 @@
+import { ENV } from "@mandruy/common/const"
 import { useEffect, useState, useRef } from "react";
 import { Button, Box } from "@mui/material";
 import * as io from "socket.io-client";
+import { useReactToPrint } from 'react-to-print';
 
 const getMediaStream = () => {
   return navigator.mediaDevices.getUserMedia({
@@ -20,6 +22,8 @@ interface WordRecognized {
 }
 
 const AudioToText = () => {
+  const SERVER_URL = String(process.env[`REACT_APP_${ENV.SERVER_URL}`])
+
   const [connection, setConnection] = useState<io.Socket>();
   const [currentRecognition, setCurrentRecognition] = useState<string>();
   const [recognitionHistory, setRecognitionHistory] = useState<string[]>([]);
@@ -29,8 +33,15 @@ const AudioToText = () => {
   const audioContextRef = useRef<any>();
   const audioInputRef = useRef<any>();
 
-  console.log('connection=', connection);
+  useEffect(() => {
+    const eventSource = new EventSource(`${SERVER_URL}/voice-to-text/sse`);
 
+    eventSource.onmessage = (event) => {
+      console.log('eventSource.onmessage', event.data);
+    };
+
+    return () => eventSource.close()
+  }, [SERVER_URL])
 
   const speechRecognized = (data: WordRecognized) => {
     if (data.isFinal) {
@@ -47,8 +58,7 @@ const AudioToText = () => {
 
   const connect = () => {
     connection?.disconnect();
-    // const socket = io.connect("http://localhost:8081");
-    const socket = io.connect("http://localhost:5001");
+    const socket = io.connect(SERVER_URL);
     socket.on("connect", () => {
       console.log("connected", socket.id);
       setConnection(socket);
@@ -64,7 +74,6 @@ const AudioToText = () => {
 
     socket.on("receive_audio_text", (data) => {
       speechRecognized(data);
-      console.log("received audio text", data);
     });
 
     socket.on("disconnect", () => {
@@ -140,6 +149,11 @@ const AudioToText = () => {
     };
   }, [connection, isRecording, recorder]);
 
+  const componentRef = useRef();
+  const handlePrintPdf = useReactToPrint({
+    content: () => componentRef.current || null,
+  });
+
   return (
     <>
         <Box>
@@ -157,8 +171,15 @@ const AudioToText = () => {
             >
               Stop
             </Button>
+            <Button
+              className="btn-outline-light"
+              onClick={handlePrintPdf}
+              disabled={!recognitionHistory.length && isRecording}
+            >
+              Download PDF
+            </Button>
         </Box>
-        <Box>
+        <Box ref={componentRef}>
           {recognitionHistory.map((tx, idx) => (
               <p key={idx}>{tx}</p>
               ))}

@@ -15,7 +15,9 @@ export class FilesService {
   }
 
   //this for saving file on server
-  async createFile(file: Express.Multer.File): Promise<string> {
+  async createFile(
+    file: Express.Multer.File | { originalname: string; buffer: string },
+  ): Promise<string> {
     try {
       const uniqueFileName = this.createUniqueFileName(file.originalname);
       const filePath = path.resolve(__dirname, '..', '..', '..', 'static');

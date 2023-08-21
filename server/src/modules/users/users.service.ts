@@ -7,7 +7,7 @@ import { User, UserDocument } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/modules/roles/roles.service';
 import { HttpCacheService } from 'src/modules/http-cache/http-cache.service';
-import { FilesService } from '../files/files.service';
+import { FilesService } from 'src/modules/files/files.service';
 
 @Injectable()
 export class UsersService {
