@@ -10,7 +10,7 @@ export class VoiceToTextController {
   sse(): Observable<MessageEvent> {
     return fromEvent(this.eventEmitter, 'endGoogleCloudStreamResult').pipe(
       map((data: string) => {
-        console.log('rxjs map data ===>>>', data);
+        console.log('rxjs map data ==>>>', data);
         return { data } as MessageEvent;
       }),
     );
