@@ -10,7 +10,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 const bootstrap = async () => {
   try {
     const PORT = process.env.SERVER_PORT || 5002;
-
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     addSwaggerApiDocumentation(app);
