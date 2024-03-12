@@ -16,7 +16,7 @@ import { TokenModule } from 'src/modules/token/token.module';
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get<string>(ENV.EMAIL_HOST),
-          port: configService.get<string>(ENV.EMAIL_PORT),
+          port: configService.get<number>(ENV.EMAIL_PORT),
           secure: false,
           auth: {
             user: configService.get<string>(ENV.EMAIL_USER),

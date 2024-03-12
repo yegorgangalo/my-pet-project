@@ -11,10 +11,10 @@ export class MailService {
   ) {}
 
   async sendActivationMail(emailTo: string, activateAccountKey: string) {
-    console.log('sendActivationMail');
     try {
       const SERVER_URL = this.configService.get<string>(ENV.SERVER_URL);
       const fullActivationLink = `${SERVER_URL}/users/activate/${activateAccountKey}`;
+      console.log('sendActivationMail:', { emailTo, fullActivationLink });
       const res = await this.mailerService.sendMail({
         to: emailTo,
         subject: 'Greeting from NestJS NodeMailer',
@@ -31,7 +31,7 @@ export class MailService {
       });
       return res;
     } catch (err) {
-      console.log(err);
+      console.log('sendActivationMail error:', err);
       return err;
     }
     // return this.mailerService
