@@ -4,7 +4,7 @@ import { IAuthResponse } from "interfaces/IAuthResponse"
 
 export const refreshToken = async () => {
   const { data } = await axios.get<IAuthResponse>(
-    `${process.env[`REACT_APP_${ENV.SERVER_URL}`]}/auth/refresh`,
+    `${import.meta.env[`VITE_${ENV.SERVER_URL}`]}/auth/refresh`,
     { withCredentials: true }
   )
   localStorage.setItem(LS.ACCESS_TOKEN, data.accessToken)
@@ -13,7 +13,7 @@ export const refreshToken = async () => {
 
 const API = axios.create({
   withCredentials: true,
-  baseURL: process.env[`REACT_APP_${ENV.SERVER_URL}`],
+  baseURL: import.meta.env[`VITE_${ENV.SERVER_URL}`],
 })
 
 API.interceptors.request.use((config) => {

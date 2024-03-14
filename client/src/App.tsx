@@ -25,7 +25,7 @@ function App() {
     if (isLoadedBE) {
       return
     }
-    if (localStorage.getItem(LS.ACCESS_TOKEN) ) {
+    if (localStorage.getItem(LS.ACCESS_TOKEN)) {
       checkAuth()
     } else {
       setIsLoadedBE()
@@ -36,23 +36,23 @@ function App() {
 
   return (<FormProvider {...methods}>
     {!isLoadedBE
-      ? <Spinner centerred/>
+      ? <Spinner centerred />
       : (
-      <>
-        <Navigation />
-        <Suspense fallback={<Spinner centerred />}>
-          <Routes>
-            <Route path="/login" element={<PublicRoute component={<LoginPage/>} restricted redirectTo={user.isActivated ? "/" : "/activate"}/>} />
-            <Route path="/register" element={<PublicRoute component={<RegisterPage/>} restricted redirectTo="/activate"/>} />
-            <Route path="/activate" element={<PrivateRoute component={<ActivatePage/>} noActivation redirectTo={"/users"}/>} />
-            <Route path="/users" element={<PrivateRoute component={<UsersPage/>} allowedRoles={[ROLES.TOURIST]} userRoles={user.roles} />} />
-            <Route path="/audio-to-text" element={<PrivateRoute component={<AudioToText/>} allowedRoles={[ROLES.TOURIST]} userRoles={user.roles} />} />
-            <Route path="/profile" element={<PrivateRoute component={<ProfilePage/>}/>} />
-            <Route path="/" element={<PublicRoute component={<MainPage/>} />} />
-          </Routes>
-        </Suspense>
-      </>
-    )}
+        <>
+          <Navigation />
+          <Suspense fallback={<Spinner centerred />}>
+            <Routes>
+              <Route path="/login" element={<PublicRoute component={<LoginPage />} restricted redirectTo={user?.isActivated ? "/" : "/activate"} />} />
+              <Route path="/register" element={<PublicRoute component={<RegisterPage />} restricted redirectTo="/activate" />} />
+              <Route path="/activate" element={<PrivateRoute component={<ActivatePage />} noActivation redirectTo={"/users"} />} />
+              <Route path="/users" element={<PrivateRoute component={<UsersPage />} allowedRoles={[ROLES.TOURIST]} userRoles={user?.roles} />} />
+              <Route path="/audio-to-text" element={<PrivateRoute component={<AudioToText />} allowedRoles={[ROLES.TOURIST]} userRoles={user?.roles} />} />
+              <Route path="/profile" element={<PrivateRoute component={<ProfilePage />} />} />
+              <Route path="/" element={<PublicRoute component={<MainPage />} />} />
+            </Routes>
+          </Suspense>
+        </>
+      )}
   </FormProvider>
   )
 }

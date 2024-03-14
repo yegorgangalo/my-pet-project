@@ -31,8 +31,8 @@ const PublicRoute: FC<PrivateRouteProps> = (props) => {
 
   const hasUserAccessByRole = allowedRoles.some(role => normalizedUserRoles.includes(role))
 
-  // const isLoggedIn = noActivation ? isAuth : (isAuth && user.isActivated)
-  const isLoggedIn = (noActivation && isAuth) ? !user.isActivated : user.isActivated
+  // const isLoggedIn = noActivation ? isAuth : (isAuth && user?.isActivated)
+  const isLoggedIn = (noActivation && isAuth) ? !user?.isActivated : user?.isActivated
   const hasAccess = hasUserAccessByRole && isLoggedIn
 
   return (<>

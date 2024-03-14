@@ -15,8 +15,8 @@ export const useGoogle = () => {
     setScriptLoaded(true)
     try {
       googleWindow.google.accounts.id.initialize({
-        client_id: process.env[
-          `REACT_APP_${ENV.GOOGLE_AUTH_CLIENT_ID}`
+        client_id: import.meta.env[
+          `VITE_${ENV.GOOGLE_AUTH_CLIENT_ID}`
         ] as string,
         callback: (res: any) => {
           googleAuth(res.credential)

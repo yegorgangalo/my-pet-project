@@ -13,8 +13,8 @@ interface IswitchIsActive {
 const Navigation: FC = () => {
   const { isAuth, user } = useTypedSelector(state => state.user)
   const isLoggedIn = isAuth
-  const isLoggedInAndActivated = isAuth && user.isActivated
-  const isLoggedInAndNotActivated = isAuth && !user.isActivated
+  const isLoggedInAndActivated = isAuth && user?.isActivated
+  const isLoggedInAndNotActivated = isAuth && !user?.isActivated
 
   const switchIsActive = ({ isActive }: IswitchIsActive) => isActive ? s.activeLink : s.link
 
@@ -31,10 +31,10 @@ const Navigation: FC = () => {
         </>)}
         {isLoggedInAndNotActivated && <NavLink to="/activate" className={switchIsActive}>Activate</NavLink>}
       </nav>
-      {isLoggedIn && <UserMenu/>}
+      {isLoggedIn && <UserMenu />}
     </Box>
-    <Divider/>
-    </>
+    <Divider />
+  </>
   );
 }
 

@@ -13,7 +13,7 @@ const UsersPage: FC = () => {
       const { data } = await UserService.fetchUsers()
       setUsers(data)
     } catch (err) {
-        console.log((err as Error).message)
+      console.log((err as Error).message)
     }
   }
 
@@ -23,11 +23,11 @@ const UsersPage: FC = () => {
       <button onClick={() => fetchUsers()}>get users list</button>
       {!users.length ? null : (
         <ul>
-          {users.map(user => (<li key={user._id}>
-            <p>Name: {user.name}</p>
-            <p>Email: {user.email}</p>
-            <p>Is active: {user.isActivated.toString()}</p>
-            <p>Roles: {user.roles.reduce((acc, role) => {
+          {users.map(user => (<li key={user?._id}>
+            <p>Name: {user?.name}</p>
+            <p>Email: {user?.email}</p>
+            <p>Is active: {user?.isActivated.toString()}</p>
+            <p>Roles: {user?.roles.reduce((acc, role) => {
               return acc + `${role.value} (${role.description})`
             }, '')}</p>
           </li>))}

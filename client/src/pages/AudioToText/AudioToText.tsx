@@ -22,7 +22,7 @@ interface WordRecognized {
 }
 
 const AudioToText = () => {
-  const SERVER_URL = String(process.env[`REACT_APP_${ENV.SERVER_URL}`])
+  const SERVER_URL = String(import.meta.env[`VITE_${ENV.SERVER_URL}`])
 
   const [connection, setConnection] = useState<io.Socket>();
   const [currentRecognition, setCurrentRecognition] = useState<string>();
@@ -104,38 +104,38 @@ const AudioToText = () => {
         return;
       }
 
-        const stream = await getMediaStream();
-        console.log('stream=', stream);
+      const stream = await getMediaStream();
+      console.log('stream=', stream);
 
 
-        audioContextRef.current = new window.AudioContext();
-        console.log('audioContextRef.current=', audioContextRef.current);
+      audioContextRef.current = new window.AudioContext();
+      console.log('audioContextRef.current=', audioContextRef.current);
 
 
-        await audioContextRef.current.audioWorklet.addModule(
-          "/worklets/recorderWorkletProcessor.js"
-        );
+      await audioContextRef.current.audioWorklet.addModule(
+        "/worklets/recorderWorkletProcessor.js"
+      );
 
-        audioContextRef.current.resume();
+      audioContextRef.current.resume();
 
-        audioInputRef.current =
-          audioContextRef.current.createMediaStreamSource(stream);
+      audioInputRef.current =
+        audioContextRef.current.createMediaStreamSource(stream);
 
-        processorRef.current = new AudioWorkletNode(
-          audioContextRef.current,
-          "recorder.worklet"
-        );
+      processorRef.current = new AudioWorkletNode(
+        audioContextRef.current,
+        "recorder.worklet"
+      );
 
-        processorRef.current.connect(audioContextRef.current.destination);
-        audioContextRef.current.resume();
+      processorRef.current.connect(audioContextRef.current.destination);
+      audioContextRef.current.resume();
 
-        audioInputRef.current.connect(processorRef.current);
+      audioInputRef.current.connect(processorRef.current);
 
-        processorRef.current.port.onmessage = (event: any) => {
-          const audioData = event.data;
-          connection.emit("send_audio_data", { audio: audioData });
-        };
-        setIsRecording(true);
+      processorRef.current.port.onmessage = (event: any) => {
+        const audioData = event.data;
+        connection.emit("send_audio_data", { audio: audioData });
+      };
+      setIsRecording(true);
     })();
 
     return () => {
@@ -156,35 +156,35 @@ const AudioToText = () => {
 
   return (
     <>
-        <Box>
-            <Button
-              className={isRecording ? "btn-danger" : "btn-outline-light"}
-              onClick={connect}
-              disabled={isRecording}
-            >
-              Start
-            </Button>
-            <Button
-              className="btn-outline-light"
-              onClick={disconnect}
-              disabled={!isRecording}
-            >
-              Stop
-            </Button>
-            <Button
-              className="btn-outline-light"
-              onClick={handlePrintPdf}
-              disabled={!recognitionHistory.length && isRecording}
-            >
-              Download PDF
-            </Button>
-        </Box>
-        <Box ref={componentRef}>
-          {recognitionHistory.map((tx, idx) => (
-              <p key={idx}>{tx}</p>
-              ))}
-          <p>{currentRecognition}</p>
-        </Box>
+      <Box>
+        <Button
+          className={isRecording ? "btn-danger" : "btn-outline-light"}
+          onClick={connect}
+          disabled={isRecording}
+        >
+          Start
+        </Button>
+        <Button
+          className="btn-outline-light"
+          onClick={disconnect}
+          disabled={!isRecording}
+        >
+          Stop
+        </Button>
+        <Button
+          className="btn-outline-light"
+          onClick={handlePrintPdf}
+          disabled={!recognitionHistory.length && isRecording}
+        >
+          Download PDF
+        </Button>
+      </Box>
+      <Box ref={componentRef}>
+        {recognitionHistory.map((tx, idx) => (
+          <p key={idx}>{tx}</p>
+        ))}
+        <p>{currentRecognition}</p>
+      </Box>
     </>
   );
 };
